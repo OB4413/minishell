@@ -1,0 +1,169 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Tokenization.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
+/*   Updated: 2025/04/29 18:40:45 by obarais          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_shell.h"
+
+
+int ft_count_word(char *line)
+{
+	int	i;
+	int	j;
+	int k;
+	char d = '\0';
+
+	i = 0;
+	j = 0;
+	k = 0;
+	while (line[i] <= 32 && line[i] != '\0')
+		i++;
+	while (line[i] != '\0')
+	{
+		if ((line[i] == '"' || line[i] == '\'') && k == 0)
+		{
+			if((i == 0 || line[i - 1] <= 32 || line[i - 1] == '|' || ft_strrchr("><", line[i - 1])))
+				j++;
+			d = line[i];
+			k = 1;
+		}
+		if ((line[i] == '|' || ft_strchr("><", line[i]))&& k == 0)
+		{
+			if (line[i] == line[i + 1])
+				i++;
+			j++;
+		}
+		else if (line[i] > 32 && k == 0 && (i == 0 || line[i - 1] <= 32 || line[i - 1] == '|' || ft_strrchr("><", line[i - 1])))
+			j++;
+		i++;
+		if (line[i] && line[i] == d)
+		{
+            d = '\0';
+			k = 0;
+			i++;
+		}
+	}
+	return (j);
+}
+
+static char	**ft_free(char **array, size_t j)
+{
+	while (j > 0)
+	{
+		j--;
+		free(array[j]);
+	}
+	free(array);
+	return (NULL);
+}
+
+char *ft_alloc_and_cpy(char *s, int *i)
+{
+    int start;
+    char q;
+
+    start = *i;
+    while (s[*i])
+    {
+        if (ft_strrchr("><", s[*i]) || s[*i] == '|')
+        {
+            if (s[*i] == '|')
+                return ((*i)++,"|");
+            if (ft_strrchr("><", s[*i]) && s[*i] == s[*i + 1])
+                (*i)++;
+            (*i)++;
+            return (ft_substr(s, start, *i - start));
+        }
+        if (s[*i] == '"' || s[*i] == '\'')
+        {
+            q = s[*i];
+            (*i)++;
+            while (s[*i] && s[*i] != q)
+                (*i)++;
+            if (!s[*i])
+                return (ft_substr(s, start, *i - start));
+        }
+        if (s[*i + 1] <= 32 || ft_strrchr("><", s[*i + 1]) || s[*i + 1] == '|')
+        {
+            (*i)++;
+            return (ft_substr(s, start, *i - start));
+        }
+        (*i)++;
+    }
+    return (ft_substr(s, start, *i - start));
+}
+
+char **split_line(char *line)
+{
+    int i = 0;
+    int j = 0;
+	int words;
+    char    **array;
+
+	words = ft_count_word(line);
+    array = (char **)malloc((words + 1) * sizeof(char *));
+	if (array == NULL)
+    return (NULL);
+	while (line[i] && j < words)
+	{
+        while (line[i] && line[i] <= 32)
+        i++;
+		array[j] = ft_alloc_and_cpy(line, &i);
+		if (!array[j])
+			return (ft_free(array, j));
+		j++;
+	}
+	array[j] = NULL;
+	return (array);
+}
+
+void    chosse_type(t_input **new)
+{
+    if ((*new)->value[0] == '|')
+        (*new)->type = PIPE;
+    else if ((*new)->value[0] == '<' && (*new)->value[1] == '<')
+        (*new)->type = HEREDOC;
+    else if ((*new)->value[0] == '<')
+        (*new)->type = REDIRECT_IN;
+    else if ((*new)->value[0] == '>' && (*new)->value[1] != '>')
+        (*new)->type = APPEND;
+    else if ((*new)->value[0] == '>')
+        (*new)->type = REDIRECT_OUT;
+    else
+        (*new)->type = WORD;
+}
+
+void	tokenization(char *line, t_input **tok)
+{
+    char **p;
+    int    i = 0;
+    t_input *new;
+    t_input *temp;
+
+	p = split_line(line);
+
+    while (p[i] != NULL)
+    {
+        new = (t_input *)malloc(sizeof(t_input));
+        new->value = ft_strdup(p[i]);
+        chosse_type(&new);
+        new->next = NULL;
+        if (*tok == NULL)
+            *tok = new;
+        else
+        {
+            temp = *tok;
+            while (temp->next != NULL)
+                temp = temp->next;
+            temp->next = new;
+        }
+        i++;
+    }
+}
