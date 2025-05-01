@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/01 16:57:15 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/01 18:13:29 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,7 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-
+            exection(cmd_list, &env_list);
 
             cmd_list = NULL;
             tok = NULL;
