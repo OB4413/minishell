@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/01 16:29:33 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 12:56:45 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,17 @@ void	getenvfunc(char **env)
 	// list_to_table(env_list);
 	
 	int	i;
-	
 	i = 0;
 	while (env[i] != NULL)
 	{
-		printf("%s\n", env[i]);
+		if(ft_strchr(env[i], '=') && ((ft_strchr(env[i], '=') + 1)[1] != '\0'))
+			printf("%s\n", env[i]);
 		i++;
 	}
+	printf("this is from env");
 }
 
-void	shell_luncher(t_command *cmdList)
+void	shell_luncher(t_command *cmdList, char **env)
 {
 	pid_t	pid;
 	int		status;
@@ -44,7 +45,7 @@ void	shell_luncher(t_command *cmdList)
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve_like_execvp(cmdList->cmd , cmdList->args) == -1)
+		if (execve_like_execvp(cmdList->cmd , cmdList->args, env) == -1)
 			perror("Error");
 		exit(EXIT_FAILURE);
 	}
@@ -99,26 +100,59 @@ void	ft_cd(char **cmdlist)
 	}
 }
 
-void	exection(t_command *cmd_list, list_env **env_list)
+void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env)
 {
-	char **env;
-	env = list_to_table(*env_list);
-
+	// int i = 0;
+	// printf("hhhhhhhhhhhhhh");
+	// while(*(env)[i])
+	// 	printf("%s\n", *(env)[i++]);
 	if (ft_strcmp(cmd_list->cmd, "pwd") == 0)
 		getworkingdir();
 	else if (ft_strcmp(cmd_list->cmd, "env") == 0)
-		getenvfunc(env);
+		getenvfunc(*env);
 	else if (ft_strcmp(cmd_list->cmd, "echo") == 0)
 		ft_echo(cmd_list->args);
 	else if (ft_strcmp(cmd_list->cmd, "cd") == 0)
 		ft_cd(cmd_list->args);
 	else if (ft_strcmp(cmd_list->cmd, "export") == 0)
-		ft_export(cmd_list->args, &env);
+		ft_export(cmd_list->args, *env, env_list);
 	else if (ft_strcmp(cmd_list->cmd, "unset") == 0)
-		ft_unset(cmd_list->args, &env);
+		ft_unset(cmd_list->args, env, env_list);
 	else
 	{
-		shell_luncher(cmd_list);
+		shell_luncher(cmd_list, *env);
 	}
-	free(cmd_list->cmd);
+	// free(cmd_list->cmd);
+}
+
+void	exection(t_command *cmd_list, list_env **env_list)
+{
+	char **env;
+	env = list_to_table(*env_list);
+
+	// int j = 1;
+	// t_command *cmd_list2 = cmd_list;
+	// while (cmd_list2)
+	// {
+	//         printf("command %d:\n", j);
+	//         printf("cmd :%s\n", cmd_list2->cmd);
+	//         printf("args :");
+	//         for (size_t i = 0; cmd_list2->args[i]; i++)
+	//         {
+	//             printf("%s  ", cmd_list2->args[i]);
+	//         }
+	//         printf("\n");
+	//         while(cmd_list2->inoutfile)
+	//         {
+	//             printf("filename :%s   type:%d\n",  cmd_list2->inoutfile->filename, cmd_list2->inoutfile->type);
+	//             cmd_list2->inoutfile = cmd_list2->inoutfile->next;
+	//         }
+	//         cmd_list2 = cmd_list2->next;
+	//         j++;
+	// }
+	// if(is_redirection(cmd_list, env_list, &env) == 1)
+	// {
+	// 	return ;
+	// }
+	execute_cmd(cmd_list, env_list, &env);
 }

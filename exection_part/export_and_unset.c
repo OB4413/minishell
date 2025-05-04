@@ -6,138 +6,151 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/01 17:13:36 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 13:47:23 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-static void remove_env_var(char ***env, const char *name)
+static void remove_env_var(list_env **list, const char *name)
 {
-    char **new_env;
-    int (i), (j), (name_len), (count), (found_index);
-    name_len = strlen(name);
-    count = 0;
-    found_index = -1;
-    while ((*env)[count])
+    list_env (*list1), (*list2);
+    list1 = *list;
+    while(list1 && list1->next)
     {
-        if (strncmp((*env)[count], name, name_len) == 0 && 
-        (*env)[count][name_len] == '=')
-            found_index = count;
-        count++;
-    }
-    if (found_index == -1)
-        return;
-    new_env = malloc(count * sizeof(char *));
-    if (!new_env)
-        return;
-    i = 0;
-    j = 0;
-    while (i < count)
+    list2 = list1->next;
+    if(ft_strcmp(list2->key, name) == 0)
     {
-        if (i != found_index)
-            new_env[j++] = (*env)[i];
-        else
-            free((*env)[i]);
-        i++;
+        free(list2->key);
+        free(list2->value);
+        list1->next = list2->next;
+        free(list2);
     }
-    new_env[j] = NULL;
-    free(*env);
-    *env = new_env;
+    list1 = list1->next;
+    }
+    list2 = *list;
+    while(list2)
+    {
+        printf("%s=%s\n", list2->key, list2->value);
+        list2 = list2->next;
+    }
 }
 
-void ft_unset(char **args, char ***env)
+void ft_unset(char **args, char ***env, list_env **list)
 {
+    (void)env;
+    int i;
     if (!args[0])
     {
-        write(2, "unset: not enough arguments\n", 27);
+        printf("unset: not enough arguments\n");
         return;
     }
-    for (int i = 0; args[i]; i++)
+    i = 0;
+    (*list) = (*list)->next;
+    while(args[i])
     {
         if (strchr(args[i], '='))
         {
             printf("unset: `%s': not a valid identifier\n", args[i]);
             continue;
         }
-        remove_env_var(env, args[i]);
+        remove_env_var(list, args[i]);
+        i++;
     }
 }
 
-
-static int find_env_var(char ***env, const char *name, const char *name_val)
+list_env	*ft_lstlast2(list_env *lst)
 {
+	if (lst == NULL)
+		return (NULL);
+	while (lst->next != NULL)
+	{
+		lst = lst->next;
+	}
+	return (lst);
+}
+
+void	ft_lstadd_back2(list_env **lst, list_env *new)
+{
+	list_env	*last;
+
+	if (lst == NULL || new == NULL)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	last = ft_lstlast2(*lst);
+	last->next = new;
+}
+
+static int find_env_var(list_env **list, const char *name, const char *name_val)
+{
+    // hna khass ydkhel lchi if
+    list_env *list2;
+    list2 = *list;
     size_t name_len = ft_strlen(name);
     char *new_val;
-    for (int i = 0; (*env)[i]; i++)
+    while(list2)
     {
-        if (ft_strncmp((*env)[i], name, name_len - 1) == 0 && (*env)[i][name_len] == '+')
+        // printf("name===>%s, %s\n", name, (*list)->key);
+        if (ft_strcmp(list2->key, name) == 0 && name_val[name_len] == '=')
         {
-            new_val = ft_strdup(name_val + (name_len + 2));
-            free((*env)[i]);
-            (*env)[i] = ft_strjoin(*(env)[i], new_val);
+            // exit(0);
+            free(list2->value);
+            list2->value = ft_strdup(name_val + (name_len + 1));
+            while(list2)
+            {
+                printf("%s=%s\n", list2->key, list2->value);
+                list2 = list2->next;
+            }
             return 1;
         }
-        if (ft_strncmp((*env)[i], name, name_len - 1) == 0 && (*env)[i][name_len] == '=')
+        if (ft_strcmp(list2->key, ft_strndup(name, ft_strlen(name) - 1)) == 0 && name_val[name_len - 1] == '+' && name_val[name_len] == '=')
         {
-            free((*env)[i]);
-            (*env)[i] = ft_strdup(name_val);
+        // printf("name length => %c, %c\n", name_val[name_len], name_val[name_len - 1]);
+            new_val = ft_strjoin(list2->value, ft_strdup(name_val + (name_len + 1)));
+            free(list2->value);
+            list2->value = new_val;
+            while(list2)
+            {
+                printf("%s=%s\n", list2->key, list2->value);
+                list2 = list2->next;
+            }
             return 1;
         }
+        list2 = list2->next;
     }
     return 0;
 }
 
 // Helper to add/replace an env var
-static void set_env_var(char ***env, const char *name_value)
+static void set_env_var(list_env **list, const char *name_value)
 {
-    char (**new_env), (*name), (*eq);
-    int (count), (i);
-    count = 0;
+    // list_env *list2;
+    // list2 = *list;
+    list_env *node = malloc(sizeof(list_env));
+    char (*name), (*eq);
     eq = ft_strchr(name_value, '=');
     if (eq)
         name = ft_strndup(name_value, eq - name_value);
-    int existing = find_env_var(env, name, name_value);
-    if (existing)
+    if (find_env_var(list, name, name_value))
         return;
-    while ((*env)[count])
-        count++;
-    new_env = malloc((count + 2) * sizeof(char *));
-    if (!new_env)
-        return;
-    i = -1;
-    while(++i < count)
-        new_env[i] = ft_strdup((*env)[i]);
-    new_env[count] = ft_strdup(name_value);
-    new_env[count + 1] = NULL;
-    // free(*env);
-    *env = new_env;
-    
-}
-
-void add_to_env_var(char ***env, const char *name_value)
-{
-    char (**new_env), (*name), (*eq);
-    int (count), (i);
-    count = 0;
-    eq = ft_strchr(name_value, '+');
-    if (eq)
-        name = ft_strndup(name_value, eq - name_value);
-    int existing = find_env_var(env, name, name_value);
-    if (existing)
-        return;
-    while ((*env)[count])
-        count++;
-    new_env = malloc((count + 2) * sizeof(char *));
-    if (!new_env)
-        return;
-    i = -1;
-    while(++i < count)
-        new_env[i] = ft_strdup((*env)[i]);
-    new_env[count] = ft_strdup(name_value);
-    new_env[count + 1] = NULL;
-    // free(*env);
-    *env = new_env;    
+    if(!eq)
+    {
+        node->equal = 0;
+        node->key = ft_strdup(name_value);
+        node->value = NULL;
+    }
+    else
+    {
+        node->equal = 1;
+        node->key = ft_strndup(name_value, eq - name_value);
+        node->value = ft_strdup(eq + 1);
+    }
+    node->next = NULL;
+    ft_lstadd_back2(list, node);
 }
 
 char	*ft_strstr(char *str, char *to_find)
@@ -163,27 +176,30 @@ char	*ft_strstr(char *str, char *to_find)
 }
 
 // Main export function
-void ft_export(char **args, char ***env)
+void ft_export(char **args, char **env, list_env **list)
 {
+
+    int i;
+    i = 0;
     if (!args[0])
     {
-        for (int i = 0; (*env)[i]; i++)
-        {
-            write(1, (*env)[i], strlen((*env)[i]));
-            write(1, "\n", 1);
-        }
+        sorte_table(env);
         return;
     }
     
-    for (int i = 0; args[i]; i++)
+    while(args[i])
     {
-        if (ft_strstr(args[i], "+=") && strchr(args[i], ' ') == NULL)
-            add_to_env_var(env, args[i]);
+        // if (ft_strstr(args[i], "+=") && strchr(args[i], ' ') == NULL)
+        //     add_to_env_var(list, args[i]);
         if (strchr(args[i], '=') && strchr(args[i], ' ') == NULL)
-            set_env_var(env, args[i]);
+            set_env_var(list, args[i]);
         else
             printf("export: `%s': not a valid identifier\n", args[i]);
+        i++;
+
+        
     }
+
 }
 
 int	ft_lstsize2(list_env *lst)
@@ -205,18 +221,26 @@ int	ft_lstsize2(list_env *lst)
 
 char **list_to_table(list_env *list)
 {
-    int size = ft_lstsize2(list);
     int i;
     char **env2;
-    env2 = malloc(size * sizeof(char *));
+    i = ft_lstsize2(list);
+    env2 = malloc((i + 1) * sizeof(char *));
     i = 0;
+    list = list->next;
     while(list)
     {
-        
-        env2[i] = ft_strjoin(ft_strjoin(list->key, "="), list->value);
+        if(list->equal == 1 && list->value)
+            env2[i] = ft_strjoin(ft_strjoin(list->key, "="), list->value);
+        else if(list->equal == 1 && !list->value)
+            env2[i] = ft_strjoin(list->key, "=");
+        else
+            env2[i] = list->key;
         i++;
         list = list->next;
     }
     env2[i] = NULL;
+    // i = 0;
+    // while(env2[i])
+    //     printf("%s\n", env2[i++]);
     return env2;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/01 16:48:55 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/03 10:59:36 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ typedef enum e_input_type
 {
 	WORD,
 	PIPE,
-	REDIRECT_IN,
-	REDIRECT_OUT,
-	APPEND,
-	HEREDOC,
+	REDIRECT_IN, // 2
+	REDIRECT_OUT, // 3
+	APPEND, // 4
+	HEREDOC, // 5
 }					t_input_type;
 
 typedef struct s_input
