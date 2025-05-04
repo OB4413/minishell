@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/04 13:48:13 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 17:10:41 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,7 @@ int	main(int ac, char **av, char **env)
 	tok = NULL;
 	if (ac != 1)
 		return (printf("Error: Too many arguments\n"), 1);
+	ft_list_env(env, &env_list);
 	while(1)
 	{
         signal(SIGINT, sigint_handler);
@@ -226,7 +227,6 @@ int	main(int ac, char **av, char **env)
 
 			tokenization(line, &tok);
             parsing_tokns(tok);
-			ft_list_env(env, &env_list);
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
 
@@ -257,11 +257,6 @@ int	main(int ac, char **av, char **env)
             // exit(1);
             cmd_list = NULL;
             tok = NULL;
-			pid_t pid = fork();
-            if (pid == 0)
-                exit(1);
-            else
-				wait(&pid);
 		}
 	}
 }

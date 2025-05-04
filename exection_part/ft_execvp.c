@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/01 21:01:18 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 17:06:37 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int is_executable(const char *path)
 
 char* search_path(const char *file)
 {
+    if(ft_strcmp(file,"./minishell") == 0)
+        return("./minishell");
     int i = 0;
     char *path = getenv("PATH");
     if (!path)
@@ -73,15 +75,15 @@ int execve_like_execvp(const char *file, char **argv, char **env)
         errno = ENOENT;
         return -1;
     }
-    if (ft_strchr(file, '/'))
-        return execve(file, argv, env);
     full_path = search_path(file);
+    change_table(full_path, &argv);
+    if (ft_strchr(file, '/'))
+        return execve(full_path, argv, env);
     if (!full_path)
     {
         errno = ENOENT;
         return -1;
     }
-    change_table(full_path, &argv);
     int result = execve(full_path, argv, env);
     free(full_path);
     return result;
