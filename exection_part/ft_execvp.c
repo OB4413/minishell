@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/04 16:38:37 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/05 09:43:55 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int is_executable(const char *path)
 
 char* search_path(const char *file)
 {
+    if(ft_strcmp(file,"./minishell") == 0)
+        return("./minishell");
     int i = 0;
     char *path = getenv("PATH");
     if (!path)
@@ -61,7 +63,7 @@ void change_table(char *new_str, char ***tab)
     *tab = tab2;
 }
 
-int execve_like_execvp(const char *file, char **argv)
+int execve_like_execvp(const char *file, char **argv, char **env)
 {
     char *full_path;
     char *path;
@@ -73,18 +75,16 @@ int execve_like_execvp(const char *file, char **argv)
         errno = ENOENT;
         return -1;
     }
-    char *path_copy = ft_strdup(path);
-    char **environ = ft_split1(path_copy, ':');
-    if (ft_strchr(file, '/'))
-        return execve(file, argv, environ);
     full_path = search_path(file);
+    change_table(full_path, &argv);
+    if (ft_strchr(file, '/'))
+        return execve(full_path, argv, env);
     if (!full_path)
     {
         errno = ENOENT;
         return -1;
     }
-    change_table(full_path, &argv);
-    int result = execve(full_path, argv, environ);
+    int result = execve(full_path, argv, env);
     free(full_path);
     return result;
 }

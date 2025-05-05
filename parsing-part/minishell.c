@@ -6,7 +6,11 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/05/04 16:32:43 by obarais          ###   ########.fr       */
+=======
+/*   Updated: 2025/05/04 17:10:41 by ael-jama         ###   ########.fr       */
+>>>>>>> 6b671d2ad122ee514afe3d76cdd98461d5ee2f56
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +217,7 @@ int	main(int ac, char **av, char **env)
 	tok = NULL;
 	if (ac != 1)
 		return (printf("Error: Too many arguments\n"), 1);
+	ft_list_env(env, &env_list);
 	while(1)
 	{
         signal(SIGINT, sigint_handler);
@@ -226,14 +231,15 @@ int	main(int ac, char **av, char **env)
 
 			tokenization(line, &tok);
             parsing_tokns(tok);
-			ft_list_env(env, &env_list);
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
 
             int j = 1;
             t_command *cmd_list2 = cmd_list;
+            t_redir  *redir =  cmd_list2->inoutfile;
             while (cmd_list2)
             {
+                    redir =  cmd_list2->inoutfile;
                     printf("command %d:\n", j);
                     printf("cmd :%s\n", cmd_list2->cmd);
                     printf("args :");
@@ -242,16 +248,17 @@ int	main(int ac, char **av, char **env)
                         printf("%s  ", cmd_list2->args[i]);
                     }
                     printf("\n");
-                    while(cmd_list2->inoutfile)
+                    while(redir)
                     {
-                        printf("filename :%s   type:%d\n",  cmd_list2->inoutfile->filename, cmd_list2->inoutfile->type);
-                        cmd_list2->inoutfile = cmd_list2->inoutfile->next;
+                        printf("filename :%s   type:%d\n",  redir->filename, redir->type);
+                        redir = redir->next;
                     }
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
+            
             exection(cmd_list, &env_list);
-
+            // exit(1);
             cmd_list = NULL;
             tok = NULL;
 		}
