@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/01 16:29:33 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 16:34:23 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	getworkingdir(void)
 void	getenvfunc(char **env)
 {
 	// list_to_table(env_list);
-	
+
 	int	i;
-	
+
 	i = 0;
 	while (env[i] != NULL)
 	{
@@ -54,7 +54,9 @@ void	shell_luncher(t_command *cmdList)
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		signal(SIGINT, sigint_handler);
 	}
 }
 

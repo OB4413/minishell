@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/01 16:48:55 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/04 16:34:10 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ void	tokenization(char *line, t_input **tok);
 void	expand_variables(t_input **tok, list_env *env);
 void 	parsing_tokns(t_input *tok);
 void    exection(struct s_command *cmd_list, list_env **env_list);
+void	sigint_handler(int signal);
 
 #endif

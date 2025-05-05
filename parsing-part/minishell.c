@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/01 18:13:29 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/04 16:32:43 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,6 @@ void sigint_handler(int signal)
     {
         write(1, "\n", 1);
         write(1, "minishell$ ", 11);
-        x = 1;
     }
 }
 
@@ -217,6 +216,7 @@ int	main(int ac, char **av, char **env)
 	while(1)
 	{
         signal(SIGINT, sigint_handler);
+        signal(SIGQUIT, SIG_IGN);
 		line = readline("minishell$ ");
 		if (!line)
 			return(printf("Exiting...\n"), 1);
@@ -254,12 +254,8 @@ int	main(int ac, char **av, char **env)
 
             cmd_list = NULL;
             tok = NULL;
-			pid_t pid = fork();
-            if (pid == 0)
-                exit(1);
-            else
-				wait(&pid);
 		}
 	}
+    rl_clear_history();
 }
 
