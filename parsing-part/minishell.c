@@ -6,11 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/05/04 16:32:43 by obarais          ###   ########.fr       */
-=======
-/*   Updated: 2025/05/04 17:10:41 by ael-jama         ###   ########.fr       */
->>>>>>> 6b671d2ad122ee514afe3d76cdd98461d5ee2f56
+/*   Updated: 2025/05/05 09:46:37 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +252,7 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-            
+
             exection(cmd_list, &env_list);
             // exit(1);
             cmd_list = NULL;
