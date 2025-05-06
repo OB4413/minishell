@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/05 09:44:12 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 14:57:32 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	shell_luncher(t_command *cmdList, char **env)
 	pid = fork();
 	if (pid == 0)
 	{
+		signal(SIGQUIT, SIG_DFL);
 		if (execve_like_execvp(cmdList->cmd , cmdList->args, env) == -1)
 			perror("Error");
 		exit(EXIT_FAILURE);
@@ -57,6 +58,14 @@ void	shell_luncher(t_command *cmdList, char **env)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		if (WIFSIGNALED(status))
+        {
+            int sig = WTERMSIG(status);
+            if (sig == SIGINT)
+                printf("\n");
+            else if (sig == SIGQUIT)
+                printf("Quit (core dumped)\n");
+        }
 		signal(SIGINT, sigint_handler);
 	}
 }

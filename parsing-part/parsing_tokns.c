@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 09:24:49 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 15:16:14 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			return ;
 		tok = tok->next;
 	}
-	(*cmd_list)->heredoc = fd;
+	(*cmd_list)->heredoc = tmp;
 }
 
 void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)

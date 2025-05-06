@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/04 13:44:53 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 13:40:54 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <sys/wait.h>
 #include "../parsing-part/mini_shell.h"
 #include "../parsing-part/libft/libft.h"
+# include <wait.h>
 
 
 struct  s_command;

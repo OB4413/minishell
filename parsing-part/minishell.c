@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/05 18:45:34 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 14:49:09 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,8 @@ void sigint_handler(int signal)
         write(1, "\n", 1);
         write(1, "minishell$ ", 11);
     }
+    else if (signal == SIGQUIT)
+        exit(1);
 }
 
 char **cpy_env(char **env)
