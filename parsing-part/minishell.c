@@ -6,13 +6,11 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/05 09:46:37 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/05 18:45:34 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
-
-int x = 0;
 
 void	ft_list_env(char **env, list_env **env_list)
 {
@@ -226,9 +224,9 @@ int	main(int ac, char **av, char **env)
 			add_history(line);
 
 			tokenization(line, &tok);
-            parsing_tokns(tok);
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
+            parsing_tokns(tok, &cmd_list, env_list);
 
             int j = 1;
             t_command *cmd_list2 = cmd_list;

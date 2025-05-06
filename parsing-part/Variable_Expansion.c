@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/04/30 08:49:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/05 18:19:43 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ char *ft_check_quote(char *str, list_env *env, char q)
 			i++;
 		}
 	}
+	if (str[ft_strlen(str) - 1] != q || str[1] == '\0')
+	{
+		printf("Error: Unmatched quotes\n");
+		exit(1);
+	}
 	return (tokn);
 }
 
@@ -159,7 +164,7 @@ void expand_variables(t_input **tok, list_env *env)
 			temp->value = tokn;
 			tokn = NULL;
 		}
-		else if (temp->type == HEREDOC)
+		else if (temp->type == HEREDOC || temp->type == REDIRECT_OUT || temp->type == APPEND)
 			temp = temp->next;
 		temp = temp->next;
 	}

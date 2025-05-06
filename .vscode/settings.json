@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "wait.h": "c",
-        "minishell_exec.h": "c"
-    }
-}
