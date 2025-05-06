@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 13:40:54 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 15:32:17 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,12 @@ void    exection(struct s_command *cmd_list, struct s_list_env **env_list);
 char    **list_to_table(list_env *list);
 char	*ft_strstr(char *str, char *to_find);
 int     is_redirection(t_command *cmd, list_env **env_list, char ***env);
-void heredoc_redirection(struct s_command *cmd);
-void in_heredoc_redirs(struct s_command *cmd);
-void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env);
-void sorte_table(char **arr);
-int	ft_lstsize2(list_env *lst);
+void    heredoc_redirection(struct s_command *cmd);
+void    in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env);
+void    execute_cmd(t_command *cmd_list, list_env **env_list, char ***env);
+void    sorte_table(char **arr);
+int	    ft_lstsize2(list_env *lst);
+void    execute_piped_commands(t_command *cmd, list_env **env_list, char ***env);
 
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 14:57:32 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 15:34:03 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,11 +161,12 @@ void	exection(t_command *cmd_list, list_env **env_list)
 	//         cmd_list2 = cmd_list2->next;
 	//         j++;
 	// }
-	if(is_redirection(cmd_list, env_list, &env) == 1)
-	{
-		printf("ccc");
-		// exit(0);
-		return ;
-	}
-	execute_cmd(cmd_list, env_list, &env);
+	execute_piped_commands(cmd_list, env_list, &env);
+	// if(is_redirection(cmd_list, env_list, &env) == 1)
+	// {
+	// 	printf("ccc");
+	// 	// exit(0);
+	// 	return ;
+	// }
+	// execute_cmd(cmd_list, env_list, &env);
 }

@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/04 16:42:09 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 10:35:53 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,12 @@
 
 int is_redirection(t_command *cmd, list_env **env_list, char ***env)
 {
-    int (fd);
-    int flags;
+    int (fd), (flags), (saved_stdout);
+    saved_stdout = dup(1);
 
     t_command *cmd2 = cmd;
     if(cmd2->inoutfile && (cmd2->inoutfile->type == 1 || cmd2->inoutfile->type == 2))
     {
-        // printf("wach\n");
-        // exit(1);
         if(cmd2->inoutfile->type == 1)
             flags = O_WRONLY | O_CREAT | O_TRUNC;
         else
@@ -33,17 +31,14 @@ int is_redirection(t_command *cmd, list_env **env_list, char ***env)
             return(perror("dup2 failed"), 0);
         close(fd);
         execute_cmd(cmd, env_list, env);
-        // write(fd, cmd2->cmd, ft_strlen(cmd2->cmd));
-        // i = -1;
-        // while(cmd2->args[++i])
-        //     write(fd, cmd2->args[i], ft_strlen(cmd2->args[i]));
-        // exit(1);
+        dup2(saved_stdout, 1);
+        close(saved_stdout);
         return (1);
     }
     else if(cmd2->inoutfile && (cmd2->inoutfile->type == 0 || cmd2->inoutfile->type == 3))
-        return(printf("bach\n"),in_heredoc_redirs(cmd), exit(1), 1);
+        return(in_heredoc_redirs(cmd, env_list, env), 1);
     else
-        return (printf("3lach\n"),0);
+        return (0);
 }
 
 void heredoc_redirection(struct s_command *cmd)
@@ -70,7 +65,7 @@ void heredoc_redirection(struct s_command *cmd)
     close(pipefd[0]);
 }
 
-void in_heredoc_redirs(struct s_command *cmd)
+void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env)
 {
     int fd;
     if(cmd->inoutfile->type == 0)
@@ -79,8 +74,57 @@ void in_heredoc_redirs(struct s_command *cmd)
         if(fd == -1)
             return(perror("open REDIRECT_IN"));
         dup2(fd, 0);
+        execute_cmd(cmd, env_list, env);
         close(fd);
     }
     else
         heredoc_redirection(cmd);
+}
+
+void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***env)
+{
+    pid_t pid;
+    int (pipe_fd[2]), (prev_fd);
+    prev_fd = -1;
+    while (cmd_list)
+    {
+        if (cmd_list->next) // not the last command: create a pipe
+        {
+            if (pipe(pipe_fd) == -1)
+                return (perror("pipe"));
+        }
+        pid = fork();
+        if (pid == -1)
+            return (perror("fork"));
+        if (pid == 0) // Child process
+        {
+            if (prev_fd != -1)
+            {
+                dup2(prev_fd, 0);
+                close(prev_fd);
+            }
+            if (cmd_list->next)
+            {
+                dup2(pipe_fd[1], 1);
+                close(pipe_fd[0]);
+                close(pipe_fd[1]);
+            }
+            if(is_redirection(cmd_list, env_list, env) != 1)
+                execute_cmd(cmd_list, env_list, env);
+            exit(EXIT_FAILURE);
+        }
+        else // Parent process
+        {
+            waitpid(pid, NULL, 0);
+
+            if (prev_fd != -1)
+                close(prev_fd);
+            if (cmd_list->next)
+            {
+                close(pipe_fd[1]);
+                prev_fd = pipe_fd[0];
+            }
+            cmd_list = cmd_list->next;
+        }
+    }
 }
