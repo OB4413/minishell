@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/06 10:35:53 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:59:00 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***en
     pid_t pid;
     int (pipe_fd[2]), (prev_fd);
     prev_fd = -1;
+    if(!cmd_list->next){
+        return(execute_cmd(cmd_list, env_list, env));
+    }
     while (cmd_list)
     {
         if (cmd_list->next) // not the last command: create a pipe

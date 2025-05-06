@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 15:16:30 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:11:13 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ typedef enum e_input_type
 {
 	WORD,
 	PIPE,
-	REDIRECT_IN, // 2
-	REDIRECT_OUT, // 3
-	APPEND, // 4
-	HEREDOC, // 5
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	APPEND,
+	HEREDOC,
 }					t_input_type;
 
 typedef struct s_input
