@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 15:16:14 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 15:04:40 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char *random_str()
 	static int count = 0;
 	char *str;
 
-	str = ft_strjoin("/tmp/heredoc_", ft_itoa(count));
+	str = ft_strjoin("/tmp/heredoc+", ft_itoa(count));
 	count++;
 	return (str);
 }
@@ -163,8 +163,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 		}
 		if (tok->type == HEREDOC && tok->next->type == WORD)
 		{
-			tmp = random_str();
-			fd = open(tmp, O_CREAT | O_RDWR | O_TRUNC, 0644);
+			(*cmd_list)->heredoc = random_str();
+			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (fd == -1)
 			{
 				printf("minishell: i can not open the file\n");
@@ -189,7 +189,6 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			return ;
 		tok = tok->next;
 	}
-	(*cmd_list)->heredoc = tmp;
 }
 
 void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
@@ -210,4 +209,5 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 		exit(1);
 	}
 	handler_heredoc(tok, cmd_list, env);
+	// chek_ambiguous_redirect(cmd_list);
 }
