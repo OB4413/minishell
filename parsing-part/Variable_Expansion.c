@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 13:45:48 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 15:58:39 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char *ft_strjoin_c(char *s1, char c)
 	return (str);
 }
 
-char *filed_split(char *str)
+char *filed_split(char *str, t_input **tok)
 {
 	int i;
 	char *tmp = NULL;
@@ -156,7 +156,8 @@ void expand_variables(t_input **tok, list_env *env)
 					start = i;
 					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_'))
 						i++;
-					tokn = ft_strjoin(tokn, filed_split(get_value(ft_substr(temp->value, start, i-start), env)));
+
+					tokn = ft_strjoin(tokn, filed_split(get_value(ft_substr(temp->value, start, i-start), env), *tok));
 				}
 				else if (temp->value[i] == '"')
 				{
