@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 13:50:26 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 14:57:12 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,8 +229,7 @@ int	main(int ac, char **av, char **env)
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
             parsing_tokns(tok, &cmd_list, env_list);
-            printf("%s\n", cmd_list->heredoc);
-    
+
             int j = 1;
             t_command *cmd_list2 = cmd_list;
             t_redir  *redir =  cmd_list2->inoutfile;
@@ -253,7 +252,6 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-            exit(1);
             exection(cmd_list, &env_list);
             cmd_list = NULL;
             tok = NULL;
