@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/05 18:19:43 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 13:45:48 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,29 @@ char *ft_strjoin_c(char *s1, char c)
 	str[i + 1] = '\0';
 	free(s1);
 	return (str);
+}
+
+char *filed_split(char *str)
+{
+	int i;
+	char *tmp = NULL;
+
+	i = 0;
+	if(!str)
+		return (NULL);
+	while (str[i])
+	{
+		if (str[i] <= 32)
+		{
+			tmp = ft_strjoin_c(tmp, ' ');
+			printf("%s\n", str);
+			while(str[i] <= 32)
+				i++;
+		}
+		tmp = ft_strjoin_c(tmp, str[i]);
+		i++;
+	}
+	return(tmp);
 }
 
 char *ft_check_quote(char *str, list_env *env, char q)
@@ -133,7 +156,7 @@ void expand_variables(t_input **tok, list_env *env)
 					start = i;
 					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_'))
 						i++;
-					tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value, start, i-start), env));
+					tokn = ft_strjoin(tokn, filed_split(get_value(ft_substr(temp->value, start, i-start), env)));
 				}
 				else if (temp->value[i] == '"')
 				{

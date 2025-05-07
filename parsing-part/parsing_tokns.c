@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 15:16:14 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 13:53:47 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				exit(1);
 			}
 			tmp = move_quote(tok->next->value);
+			printf("%s\n", tmp);
 			str = readline("> ");
 			if (tmp[0] != '"' && tmp[0] != '\'')
 					expand_heredoc(&str, env);
@@ -210,4 +211,5 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 		exit(1);
 	}
 	handler_heredoc(tok, cmd_list, env);
+	// chek_ambiguous_redirect(cmd_list);
 }
