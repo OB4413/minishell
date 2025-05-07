@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/06 17:51:55 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/07 16:16:46 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***en
     pid_t pid;
     int (pipe_fd[2]), (prev_fd);
     prev_fd = -1;
+    if(!cmd_list->next){
+        return(execute_cmd(cmd_list, env_list, env, env1));
+    }
     while (cmd_list)
     {
         if (cmd_list->next) // not the last command: create a pipe

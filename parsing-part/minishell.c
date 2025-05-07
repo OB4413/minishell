@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 12:05:23 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:26:46 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ int	main(int ac, char **av, char **env)
 		if (strlen(line) > 0)
 		{
             add_history(line);
-            
+
 			tokenization(line, &tok);
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
@@ -256,7 +256,7 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-
+            
             exection(cmd_list, &env_list);
             // exit(1);
             cmd_list = NULL;

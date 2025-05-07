@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 12:00:56 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:26:37 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ typedef enum e_input_type
 {
 	WORD,
 	PIPE,
-	REDIRECT_IN, // 2
-	REDIRECT_OUT, // 3
-	APPEND, // 4
-	HEREDOC, // 5
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	APPEND,
+	HEREDOC,
 }					t_input_type;
 
 typedef struct s_input
