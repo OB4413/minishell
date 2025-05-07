@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 15:33:02 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/07 12:05:23 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	ft_list_env(char **env, list_env **env_list)
 {
 	int i;
 	int j;
+    int c;
 	list_env *new_env;
 	list_env *tmp;
 
@@ -36,6 +37,14 @@ void	ft_list_env(char **env, list_env **env_list)
             return ;
         new_env->key = ft_substr(env[i], 0, j);
         new_env->value = ft_substr(env[i], j + 1, ft_strlen(env[i]) - j);
+        // zedt had lIF condition besh ytincrementa shell level :)
+        if(ft_strcmp(new_env->key, "SHLVL") == 0)
+		{
+			c = ft_atoi(new_env->value);
+			c++;
+			free(new_env->value);
+			new_env->value = ft_strdup(ft_itoa(c));
+		}
         new_env->equal = 1;
         new_env->next = NULL;
         if (*env_list == NULL)
@@ -172,12 +181,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 void sigint_handler(int signal)
 {
     if (signal == SIGINT)
-    {
-        write(1, "\n", 1);
-        write(1, "minishell$ ", 11);
-    }
-    else if (signal == SIGQUIT)
-        exit(1);
+        printf("\nminishell$hhhhhhhh ");
 }
 
 char **cpy_env(char **env)

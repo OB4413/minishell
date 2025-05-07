@@ -6,13 +6,13 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/06 10:35:53 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:51:55 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-int is_redirection(t_command *cmd, list_env **env_list, char ***env)
+int is_redirection(t_command *cmd, list_env **env_list, char ***env, char ***env1)
 {
     int (fd), (flags), (saved_stdout);
     saved_stdout = dup(1);
@@ -30,13 +30,13 @@ int is_redirection(t_command *cmd, list_env **env_list, char ***env)
         if(dup2(fd, 1) == -1)
             return(perror("dup2 failed"), 0);
         close(fd);
-        execute_cmd(cmd, env_list, env);
+        execute_cmd(cmd, env_list, env, env1);
         dup2(saved_stdout, 1);
         close(saved_stdout);
         return (1);
     }
     else if(cmd2->inoutfile && (cmd2->inoutfile->type == 0 || cmd2->inoutfile->type == 3))
-        return(in_heredoc_redirs(cmd, env_list, env), 1);
+        return(in_heredoc_redirs(cmd, env_list, env, env1), 1);
     else
         return (0);
 }
@@ -65,7 +65,7 @@ void heredoc_redirection(struct s_command *cmd)
     close(pipefd[0]);
 }
 
-void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env)
+void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, char ***env1)
 {
     int fd;
     if(cmd->inoutfile->type == 0)
@@ -74,14 +74,14 @@ void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env)
         if(fd == -1)
             return(perror("open REDIRECT_IN"));
         dup2(fd, 0);
-        execute_cmd(cmd, env_list, env);
+        execute_cmd(cmd, env_list, env, env1);
         close(fd);
     }
     else
         heredoc_redirection(cmd);
 }
 
-void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***env)
+void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***env, char ***env1)
 {
     pid_t pid;
     int (pipe_fd[2]), (prev_fd);
@@ -109,8 +109,8 @@ void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***en
                 close(pipe_fd[0]);
                 close(pipe_fd[1]);
             }
-            if(is_redirection(cmd_list, env_list, env) != 1)
-                execute_cmd(cmd_list, env_list, env);
+            if(is_redirection(cmd_list, env_list, env, env1) != 1)
+                execute_cmd(cmd_list, env_list, env, env1);
             exit(EXIT_FAILURE);
         }
         else // Parent process

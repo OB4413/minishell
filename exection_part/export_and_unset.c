@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/04 13:47:23 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:47:47 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,32 @@ char **list_to_table(list_env *list)
     {
         if(list->equal == 1 && list->value)
             env2[i] = ft_strjoin(ft_strjoin(list->key, "="), list->value);
+        else if(list->equal == 1 && !list->value)
+            env2[i] = ft_strjoin(list->key, "=");
+        else
+            env2[i] = list->key;
+        i++;
+        list = list->next;
+    }
+    env2[i] = NULL;
+    // i = 0;
+    // while(env2[i])
+    //     printf("%s\n", env2[i++]);
+    return env2;
+}
+
+char **list_to_table_export(list_env *list)
+{
+    int i;
+    char **env2;
+    i = ft_lstsize2(list);
+    env2 = malloc((i + 1) * sizeof(char *));
+    i = 0;
+    list = list->next;
+    while(list)
+    {
+        if(list->equal == 1 && list->value)
+            env2[i] = ft_strjoin(ft_strjoin(ft_strjoin(ft_strjoin(list->key, "="), "\""), list->value), "\"");
         else if(list->equal == 1 && !list->value)
             env2[i] = ft_strjoin(list->key, "=");
         else
