@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/07 16:16:46 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/08 16:39:53 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ void heredoc_redirection(struct s_command *cmd)
 
 void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, char ***env1)
 {
-    int fd;
+    int fd, saved_stdout;
+    saved_stdout = dup(0);
+
     if(cmd->inoutfile->type == 0)
     {
         fd = open(cmd->inoutfile->filename, O_RDONLY);
@@ -76,6 +78,9 @@ void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, 
         dup2(fd, 0);
         execute_cmd(cmd, env_list, env, env1);
         close(fd);
+        dup2(saved_stdout, 0);
+        close(saved_stdout);
+        return ;
     }
     else
         heredoc_redirection(cmd);
@@ -87,8 +92,11 @@ void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***en
     int (pipe_fd[2]), (prev_fd);
     prev_fd = -1;
     if(!cmd_list->next){
-        return(execute_cmd(cmd_list, env_list, env, env1));
+        if(is_redirection(cmd_list, env_list, env, env1) != 1)
+            execute_cmd(cmd_list, env_list, env, env1);
+        return ;
     }
+    printf("weweweew");
     while (cmd_list)
     {
         if (cmd_list->next) // not the last command: create a pipe

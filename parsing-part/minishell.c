@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 15:47:03 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 16:41:08 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ int	main(int ac, char **av, char **env)
         signal(SIGQUIT, SIG_IGN);
 		line = readline("minishell$ ");
 		if (!line)
-            return(printf("Exiting...\n"), 1);
+            return(printf("Exit\n"), 1);
 		if (strlen(line) > 0)
 		{
             add_history(line);
@@ -264,6 +264,8 @@ int	main(int ac, char **av, char **env)
                     j++;
             }
             exection(cmd_list, &env_list);
+            
+            
             cmd_list = NULL;
             tok = NULL;
 		}
