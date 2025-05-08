@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 16:41:31 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/08 09:05:25 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ char **put_the_args(t_input *tok, char *cmd)
     t_input *tmp;
 
     tmp = tok;
-    while (strcmp(tmp->value, cmd) != 0)
+    if (!cmd || !tok->value)
+        return (NULL);
+    while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
     tmp = tmp->next;
     tmp2 = tmp;
@@ -124,7 +126,9 @@ t_redir *check_derctions(t_input *tok, char *cmd)
     t_redir *tmp2;
 
     tmp = tok;
-    while (strcmp(tmp->value, cmd) != 0)
+    if(!cmd)
+        return (NULL);
+    while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
     tmp = tmp->next;
     while (tmp && tmp->type != PIPE)
@@ -243,9 +247,12 @@ int	main(int ac, char **av, char **env)
                     printf("command %d:\n", j);
                     printf("cmd :%s\n", cmd_list2->cmd);
                     printf("args :");
-                    for (size_t i = 0; cmd_list2->args[i]; i++)
+                    if (cmd_list2->args)
                     {
-                        printf("%s  ", cmd_list2->args[i]);
+                        for (size_t i = 0; cmd_list2->args[i]; i++)
+                        {
+                            printf("%s  ", cmd_list2->args[i]);
+                        }
                     }
                     printf("\n");
                     while(redir)

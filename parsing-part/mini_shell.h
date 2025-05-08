@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 14:26:37 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/07 20:20:42 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ void    exection(struct s_command *cmd_list, list_env **env_list);
 void	sigint_handler(int signal);
 char	*get_value(char *str, list_env *env);
 char *ft_strjoin_c(char *s1, char c);
+char	**ft_split_7(char const *s);
 
 #endif
