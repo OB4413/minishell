@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 05:34:35 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/04 13:47:03 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:50:48 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void sorte_table(char **arr)
 		}
 		if (min)
 		{
-			printf("declare -x \"%s\"\n", min);
+			printf("declare -x %s\n", min);
 			printed[min_index] = 1;
 		}
 	}

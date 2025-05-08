@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/06 16:11:13 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 20:20:42 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ void    exection(struct s_command *cmd_list, list_env **env_list);
 void	sigint_handler(int signal);
 char	*get_value(char *str, list_env *env);
 char *ft_strjoin_c(char *s1, char c);
+char	**ft_split_7(char const *s);
 
 #endif

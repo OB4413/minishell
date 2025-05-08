@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 14:57:12 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 09:05:25 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	ft_list_env(char **env, list_env **env_list)
 {
 	int i;
 	int j;
+    int c;
 	list_env *new_env;
 	list_env *tmp;
 
@@ -36,6 +37,14 @@ void	ft_list_env(char **env, list_env **env_list)
             return ;
         new_env->key = ft_substr(env[i], 0, j);
         new_env->value = ft_substr(env[i], j + 1, ft_strlen(env[i]) - j);
+        // zedt had lIF condition besh ytincrementa shell level :)
+        if(ft_strcmp(new_env->key, "SHLVL") == 0)
+		{
+			c = ft_atoi(new_env->value);
+			c++;
+			free(new_env->value);
+			new_env->value = ft_strdup(ft_itoa(c));
+		}
         new_env->equal = 1;
         new_env->next = NULL;
         if (*env_list == NULL)
@@ -60,7 +69,9 @@ char **put_the_args(t_input *tok, char *cmd)
     t_input *tmp;
 
     tmp = tok;
-    while (strcmp(tmp->value, cmd) != 0)
+    if (!cmd || !tok->value)
+        return (NULL);
+    while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
     tmp = tmp->next;
     tmp2 = tmp;
@@ -115,7 +126,9 @@ t_redir *check_derctions(t_input *tok, char *cmd)
     t_redir *tmp2;
 
     tmp = tok;
-    while (strcmp(tmp->value, cmd) != 0)
+    if(!cmd)
+        return (NULL);
+    while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
     tmp = tmp->next;
     while (tmp && tmp->type != PIPE)
@@ -172,12 +185,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 void sigint_handler(int signal)
 {
     if (signal == SIGINT)
-    {
-        write(1, "\n", 1);
-        write(1, "minishell$ ", 11);
-    }
-    else if (signal == SIGQUIT)
-        exit(1);
+        printf("\nminishell$hhhhhhhh ");
 }
 
 char **cpy_env(char **env)
@@ -239,9 +247,12 @@ int	main(int ac, char **av, char **env)
                     printf("command %d:\n", j);
                     printf("cmd :%s\n", cmd_list2->cmd);
                     printf("args :");
-                    for (size_t i = 0; cmd_list2->args[i]; i++)
+                    if (cmd_list2->args)
                     {
-                        printf("%s  ", cmd_list2->args[i]);
+                        for (size_t i = 0; cmd_list2->args[i]; i++)
+                        {
+                            printf("%s  ", cmd_list2->args[i]);
+                        }
                     }
                     printf("\n");
                     while(redir)

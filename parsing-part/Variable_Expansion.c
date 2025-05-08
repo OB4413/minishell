@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 15:58:39 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 09:06:39 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,28 +53,42 @@ char *ft_strjoin_c(char *s1, char c)
 	return (str);
 }
 
-char *filed_split(char *str, t_input **tok)
+char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 {
+	t_input *new;
+	t_input *temp2;
+	char *temp3;
 	int i;
-	char *tmp = NULL;
 
 	i = 0;
-	if(!str)
-		return (NULL);
-	while (str[i])
+	temp2 = (*temp)->next;
+	temp3 = (*temp)->value;
+	if(!str || !str[0])
+		return (tokn);
+	tokn = ft_strjoin(tokn, str[i]);
+	(*temp)->value = tokn;
+	(*temp)->type = WORD;
+	tokn = NULL;
+	i++;
+	while (str[i] && str[i + 1])
 	{
-		if (str[i] <= 32)
-		{
-			tmp = ft_strjoin_c(tmp, ' ');
-			printf("%s\n", str);
-			while(str[i] <= 32)
-				i++;
-		}
-		tmp = ft_strjoin_c(tmp, str[i]);
+		new = malloc(sizeof(t_input));
+		new->value = ft_strdup(str[i]);
+		new->type = WORD;
+		new->next = NULL;
+		(*temp)->next = new;
+		(*temp) = (*temp)->next;
 		i++;
 	}
-	return(tmp);
+	new = malloc(sizeof(t_input));
+	new->type = WORD;
+	new->value = temp3;
+	(*temp)->next = new;
+	(*temp) = (*temp)->next;
+	(*temp)->next = temp2;
+	return (str[i]);
 }
+
 
 char *ft_check_quote(char *str, list_env *env, char q)
 {
@@ -156,8 +170,7 @@ void expand_variables(t_input **tok, list_env *env)
 					start = i;
 					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_'))
 						i++;
-
-					tokn = ft_strjoin(tokn, filed_split(get_value(ft_substr(temp->value, start, i-start), env), *tok));
+					tokn = split_to_tokens(tokn, &temp, ft_split_7(get_value(ft_substr(temp->value, start, i-start), env)));
 				}
 				else if (temp->value[i] == '"')
 				{

@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 15:32:17 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:52:06 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,14 @@ int     execve_like_execvp(const char *file, char **argv, char **env);
 void    exection(struct s_command *cmd_list, struct s_list_env **env_list);
 char    **list_to_table(list_env *list);
 char	*ft_strstr(char *str, char *to_find);
-int     is_redirection(t_command *cmd, list_env **env_list, char ***env);
+int     is_redirection(t_command *cmd, list_env **env_list, char ***env, char ***env1);
 void    heredoc_redirection(struct s_command *cmd);
-void    in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env);
-void    execute_cmd(t_command *cmd_list, list_env **env_list, char ***env);
+void    in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, char ***env1);
+void    execute_cmd(t_command *cmd_list, list_env **env_list, char ***env, char ***env1);
 void    sorte_table(char **arr);
 int	    ft_lstsize2(list_env *lst);
-void    execute_piped_commands(t_command *cmd, list_env **env_list, char ***env);
-
+void    execute_piped_commands(t_command *cmd, list_env **env_list, char ***env, char ***env1);
+char    **list_to_table_export(list_env *list);
 
 
 #endif

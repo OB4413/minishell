@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 16:01:17 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/07 14:26:31 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	ft_cd(char **cmdlist)
 	}
 }
 
-void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env)
+void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env, char ***env1)
 {
 	// int i = 0;
 	// printf("hhhhhhhhhhhhhh");
@@ -126,7 +126,7 @@ void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env)
 	else if (ft_strcmp(cmd_list->cmd, "cd") == 0)
 		ft_cd(cmd_list->args);
 	else if (ft_strcmp(cmd_list->cmd, "export") == 0)
-		ft_export(cmd_list->args, *env, env_list);
+		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->cmd, "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
 	else
@@ -138,9 +138,24 @@ void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env)
 
 void	exection(t_command *cmd_list, list_env **env_list)
 {
-	char **env;
+	char **env, **env1;
+	// int c;
+	// list_env *list;
+	// list = *env_list;
+	// while(list)
+	// {
+	// 	if(ft_strcmp(list->key, "SHLVL") == 0)
+	// 	{
+	// 		c = ft_atoi(list->value);
+	// 		c++;
+	// 		// free(list->value);
+	// 		list->value = ft_strdup(ft_itoa(c));
+	// 	}
+	// 	list = list->next;
+	// }
+	
 	env = list_to_table(*env_list);
-
+	env1 = list_to_table_export(*env_list);
 	// int j = 1;
 	// t_command *cmd_list2 = cmd_list;
 	// while (cmd_list2)
@@ -161,7 +176,7 @@ void	exection(t_command *cmd_list, list_env **env_list)
 	//         cmd_list2 = cmd_list2->next;
 	//         j++;
 	// }
-	execute_piped_commands(cmd_list, env_list, &env);
+	execute_piped_commands(cmd_list, env_list, &env, &env1);
 	// if(is_redirection(cmd_list, env_list, &env) == 1)
 	// {
 	// 	printf("ccc");
