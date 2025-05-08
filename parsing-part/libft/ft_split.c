@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 09:40:55 by obarais           #+#    #+#             */
-/*   Updated: 2024/11/07 11:29:11 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 17:10:51 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,6 @@ static char	*ft_alloc_and_cpy(char const *s, char c, size_t *i)
 	return (ft_substr(s, start, len));
 }
 
-static char	**ft_free(char **array, size_t j)
-{
-	while (j > 0)
-	{
-		j--;
-		free(array[j]);
-	}
-	free(array);
-	return (NULL);
-}
-
 char	**ft_split(char const *s, char c)
 {
 	size_t	i;
@@ -77,7 +66,7 @@ char	**ft_split(char const *s, char c)
 			i++;
 		array[j] = ft_alloc_and_cpy(s, c, &i);
 		if (!array[j])
-			return (ft_free(array, j));
+			return (NULL);
 		j++;
 	}
 	array[j] = NULL;

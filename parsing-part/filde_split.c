@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 20:14:33 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 08:51:41 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 17:12:06 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,6 @@ static char	*ft_alloc_and_cpy_7(char const *s, size_t *i)
 	return (ft_substr(s, start, len));
 }
 
-static char	**ft_free_7(char **array, size_t j)
-{
-	while (j > 0)
-	{
-		j--;
-		free(array[j]);
-	}
-	free(array);
-	return (NULL);
-}
-
 char	**ft_split_7(char const *s)
 {
 	size_t	i;
@@ -77,7 +66,7 @@ char	**ft_split_7(char const *s)
 			i++;
 		array[j] = ft_alloc_and_cpy_7(s, &i);
 		if (!array[j])
-			return (ft_free_7(array, j));
+			return (NULL);
 		j++;
 	}
 	array[j] = NULL;

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 14:53:56 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 17:11:47 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,6 @@ int ft_count_word(char *line)
 		}
 	}
 	return (j);
-}
-
-static char	**ft_free(char **array, size_t j)
-{
-	while (j > 0)
-	{
-		j--;
-		free(array[j]);
-	}
-	free(array);
-	return (NULL);
 }
 
 char *ft_alloc_and_cpy(char *s, int *i)
@@ -117,7 +106,7 @@ char **split_line(char *line)
         i++;
 		array[j] = ft_alloc_and_cpy(line, &i);
 		if (!array[j])
-			return (ft_free(array, j));
+			return (NULL);
 		j++;
 	}
 	array[j] = NULL;

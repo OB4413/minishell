@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 15:01:32 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 17:09:29 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	expand_heredoc(char **str, list_env *env)
 			i++;
 		}
 	}
-	free(*str);
 	*str = tmp;
 }
 char *move_quote(char *str)
@@ -91,7 +90,6 @@ char *move_quote(char *str)
 				else
 				{
 					printf("minishell: syntax error near unexpected token `%s'\n", str);
-					free(tmp);
 					exit(1);
 				}
 				return (tmp);
@@ -129,7 +127,6 @@ void	remove_quote(char **str)
 			i++;
 		}
 	}
-	free(*str);
 	*str = tmp;
 }
 
@@ -159,7 +156,6 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 		if (tok->type == HEREDOC && tok->next->type == WORD && fd != -2)
 		{
 			unlink(tmp);
-			free(tmp);
 		}
 		if (tok->type == HEREDOC && tok->next->type == WORD)
 		{
@@ -179,11 +175,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			{
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);
-				free(str);
 				str = readline("> ");
 			}
-			if (str)
-				free(str);
 		}
 		else if (tok->type == HEREDOC && tok->next->type != WORD)
 			return ;

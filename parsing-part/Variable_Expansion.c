@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 14:57:45 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 17:09:39 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ char *ft_strjoin_c(char *s1, char c)
 	}
 	str[i] = c;
 	str[i + 1] = '\0';
-	free(s1);
 	return (str);
 }
 

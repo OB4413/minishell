@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 16:41:08 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:51:56 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	ft_list_env(char **env, list_env **env_list)
 		{
 			c = ft_atoi(new_env->value);
 			c++;
-			free(new_env->value);
 			new_env->value = ft_strdup(ft_itoa(c));
 		}
         new_env->equal = 1;
@@ -164,6 +163,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
         new_cmd = ft_malloc(sizeof(t_command), 0);
         new_cmd->cmd = ft_strdup((tok)->value);
         new_cmd->args = put_the_args(tok, tok->value);
+        new_cmd->heredoc = NULL;
         new_cmd->inoutfile = check_derctions(tok , tok->value);
         new_cmd->next = NULL;
         if (*cmd_list == NULL)
@@ -228,7 +228,10 @@ int	main(int ac, char **av, char **env)
         signal(SIGQUIT, SIG_IGN);
 		line = readline("minishell$ ");
 		if (!line)
-            return(printf("Exit\n"), 1);
+        {
+            printf("Exit\n");
+            break;
+        }
 		if (strlen(line) > 0)
 		{
             add_history(line);
@@ -241,6 +244,7 @@ int	main(int ac, char **av, char **env)
             int j = 1;
             t_command *cmd_list2 = cmd_list;
             t_redir  *redir =  cmd_list2->inoutfile;
+            printf("%s\n", cmd_list2->heredoc);
             while (cmd_list2)
             {
                     redir =  cmd_list2->inoutfile;
@@ -263,14 +267,11 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-            exection(cmd_list, &env_list);
-            
-            
-            cmd_list = NULL;
-            tok = NULL;
+            // exection(cmd_list, &env_list);
 		}
 	}
     ft_malloc(1, 1);
     rl_clear_history();
+    return(0);
 }
 
