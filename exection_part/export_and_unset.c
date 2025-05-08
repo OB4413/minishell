@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 17:47:47 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/08 10:02:47 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,14 +87,16 @@ void	ft_lstadd_back2(list_env **lst, list_env *new)
 
 static int find_env_var(list_env **list, const char *name, const char *name_val)
 {
-    // hna khass ydkhel lchi if
     list_env *list2;
-    list2 = *list;
-    size_t name_len = ft_strlen(name);
+    size_t name_len;
     char *new_val;
+    
+    if(!name)
+        return 0;
+    name_len = ft_strlen(name);
+    list2 = *list;
     while(list2)
     {
-        // printf("name===>%s, %s\n", name, (*list)->key);
         if (ft_strcmp(list2->key, name) == 0 && name_val[name_len] == '=')
         {
             // exit(0);
@@ -109,10 +111,10 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
         }
         if (ft_strcmp(list2->key, ft_strndup(name, ft_strlen(name) - 1)) == 0 && name_val[name_len - 1] == '+' && name_val[name_len] == '=')
         {
-        // printf("name length => %c, %c\n", name_val[name_len], name_val[name_len - 1]);
             new_val = ft_strjoin(list2->value, ft_strdup(name_val + (name_len + 1)));
             free(list2->value);
             list2->value = new_val;
+            list2->equal = 1;
             while(list2)
             {
                 printf("%s=%s\n", list2->key, list2->value);
@@ -132,10 +134,11 @@ static void set_env_var(list_env **list, const char *name_value)
     // list2 = *list;
     list_env *node = malloc(sizeof(list_env));
     char (*name), (*eq);
+    name = NULL;
     eq = ft_strchr(name_value, '=');
     if (eq)
         name = ft_strndup(name_value, eq - name_value);
-    if (find_env_var(list, name, name_value))
+    if (name && find_env_var(list, name, name_value))
         return;
     if(!eq)
     {
@@ -191,10 +194,7 @@ void ft_export(char **args, char **env, list_env **list)
     {
         // if (ft_strstr(args[i], "+=") && strchr(args[i], ' ') == NULL)
         //     add_to_env_var(list, args[i]);
-        if (strchr(args[i], '=') && strchr(args[i], ' ') == NULL)
-            set_env_var(list, args[i]);
-        else
-            printf("export: `%s': not a valid identifier\n", args[i]);
+        set_env_var(list, args[i]);
         i++;
 
         
