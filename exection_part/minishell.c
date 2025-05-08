@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/07 14:26:31 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:47:50 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void	exection(t_command *cmd_list, list_env **env_list)
 	// 	}
 	// 	list = list->next;
 	// }
-	
+
 	env = list_to_table(*env_list);
 	env1 = list_to_table_export(*env_list);
 	// int j = 1;

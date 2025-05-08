@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 20:20:42 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:31:24 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,6 @@ void	sigint_handler(int signal);
 char	*get_value(char *str, list_env *env);
 char *ft_strjoin_c(char *s1, char c);
 char	**ft_split_7(char const *s);
+void	*ft_malloc(size_t size, int type);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 09:05:25 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:47:03 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	ft_list_env(char **env, list_env **env_list)
 
 	i = 0;
 	j = 0;
-    new_env = (list_env *)malloc(sizeof(list_env));
+    new_env = ft_malloc(sizeof(list_env), 0);
     new_env->key = ft_strdup("$?");
     new_env->value = "0";
     new_env->next = NULL;
@@ -32,7 +32,7 @@ void	ft_list_env(char **env, list_env **env_list)
         j = 0;
         while (env[i][j] != '=')
             j++;
-        new_env = (list_env *)malloc(sizeof(list_env));
+        new_env = ft_malloc(sizeof(list_env), 0);
         if (!new_env)
             return ;
         new_env->key = ft_substr(env[i], 0, j);
@@ -86,7 +86,7 @@ char **put_the_args(t_input *tok, char *cmd)
         i++;
         tmp2 = tmp2->next;
     }
-    args = (char **)malloc(sizeof(char *) * (i + 1));
+    args = ft_malloc(sizeof(char *) * (i + 1), 0);
     if (args == NULL)
         return (NULL);
     while (tmp  && tmp->type != PIPE)
@@ -107,13 +107,13 @@ char **put_the_args(t_input *tok, char *cmd)
 
 int what_direction(char *str)
 {
-    if (strcmp(str, "<") == 0)
+    if (ft_strcmp(str, "<") == 0)
         return 0;
-    else if (strcmp(str, ">") == 0)
+    else if (ft_strcmp(str, ">") == 0)
         return 1;
-    else if (strcmp(str, ">>") == 0)
+    else if (ft_strcmp(str, ">>") == 0)
         return 2;
-    else if (strcmp(str, "<<") == 0)
+    else if (ft_strcmp(str, "<<") == 0)
         return 3;
     return -1;
 }
@@ -135,7 +135,7 @@ t_redir *check_derctions(t_input *tok, char *cmd)
     {
         if (tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT)
         {
-            new_redir = (t_redir *)malloc(sizeof(t_redir));
+            new_redir = ft_malloc(sizeof(t_redir), 0);
             new_redir->filename = ft_strdup(tmp->next->value);
             new_redir->type = what_direction(tmp->value);
             new_redir->next = NULL;
@@ -161,7 +161,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 
 	while(tok != NULL)
     {
-        new_cmd = (t_command *)malloc(sizeof(t_command));
+        new_cmd = ft_malloc(sizeof(t_command), 0);
         new_cmd->cmd = ft_strdup((tok)->value);
         new_cmd->args = put_the_args(tok, tok->value);
         new_cmd->inoutfile = check_derctions(tok , tok->value);
@@ -197,7 +197,7 @@ char **cpy_env(char **env)
     p = NULL;
     while (env[i])
         i++;
-    p = malloc(sizeof(char *) * (i + 1));
+    p = ft_malloc(sizeof(char *) * (i + 1), 0);
     i = 0;
     while (env[i])
     {
@@ -228,7 +228,7 @@ int	main(int ac, char **av, char **env)
         signal(SIGQUIT, SIG_IGN);
 		line = readline("minishell$ ");
 		if (!line)
-        return(printf("Exiting...\n"), 1);
+            return(printf("Exiting...\n"), 1);
 		if (strlen(line) > 0)
 		{
             add_history(line);
@@ -268,6 +268,7 @@ int	main(int ac, char **av, char **env)
             tok = NULL;
 		}
 	}
+    ft_malloc(1, 1);
     rl_clear_history();
 }
 

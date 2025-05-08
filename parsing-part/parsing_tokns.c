@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/07 15:04:40 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:01:32 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			if (tmp[0] != '"' && tmp[0] != '\'')
 					expand_heredoc(&str, env);
 			remove_quote(&tmp);
-			while (str && strcmp(str, tmp) != 0)
+			while (str && ft_strcmp(str, tmp) != 0)
 			{
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 09:06:39 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 14:57:45 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ char	*get_value(char *str, list_env *env)
 {
 	while (env)
 	{
-		if (strcmp(env->key, str) == 0)
+		if (ft_strcmp(env->key, str) == 0)
 			return (env->value);
 		env = env->next;
 	}
@@ -30,7 +30,7 @@ char *ft_strjoin_c(char *s1, char c)
 
 	if (!s1)
 	{
-		str = (char *)malloc(2);
+		str = ft_malloc(2, 0);
 		str[0] = c;
 		str[1] = '\0';
 		return (str);
@@ -38,7 +38,7 @@ char *ft_strjoin_c(char *s1, char c)
 	i = 0;
 	while (s1[i])
 		i++;
-	str = (char *)malloc(i + 2);
+	str = ft_malloc(i + 2, 0);
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -72,7 +72,7 @@ char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 	i++;
 	while (str[i] && str[i + 1])
 	{
-		new = malloc(sizeof(t_input));
+		new = ft_malloc(sizeof(t_input), 0);
 		new->value = ft_strdup(str[i]);
 		new->type = WORD;
 		new->next = NULL;
@@ -80,7 +80,7 @@ char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 		(*temp) = (*temp)->next;
 		i++;
 	}
-	new = malloc(sizeof(t_input));
+	new = ft_malloc(sizeof(t_input), 0);
 	new->type = WORD;
 	new->value = temp3;
 	(*temp)->next = new;

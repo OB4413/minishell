@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
-/*   Updated: 2025/04/29 18:40:45 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/08 14:53:56 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ char **split_line(char *line)
     char    **array;
 
 	words = ft_count_word(line);
-    array = (char **)malloc((words + 1) * sizeof(char *));
+    array = ft_malloc((words + 1) * sizeof(char *), 0);
 	if (array == NULL)
     return (NULL);
 	while (line[i] && j < words)
@@ -151,7 +151,7 @@ void	tokenization(char *line, t_input **tok)
 
     while (p[i] != NULL)
     {
-        new = (t_input *)malloc(sizeof(t_input));
+        new = ft_malloc(sizeof(t_input), 0);
         new->value = ft_strdup(p[i]);
         chosse_type(&new);
         new->next = NULL;
