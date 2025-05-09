@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 06:11:57 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 08:22:23 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,13 @@ char **put_the_args(t_input *tok, char *cmd)
         return (NULL);
     while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
-    tmp = tmp->next;
     tmp2 = tmp;
     while(tmp2 && tmp2->type != PIPE)
     {
         if (tmp2->type == HEREDOC || tmp2->type == APPEND || tmp2->type == REDIRECT_IN || tmp2->type == REDIRECT_OUT)
         {
+            if (!tmp2->next)
+                break;
             tmp2 = tmp2->next;
             tmp2 = tmp2->next;
             continue;
@@ -92,6 +93,8 @@ char **put_the_args(t_input *tok, char *cmd)
     {
         if (tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT)
         {
+            if (!tmp->next)
+                break;
             tmp = tmp->next;
             tmp = tmp->next;
             continue;
@@ -129,10 +132,9 @@ t_redir *check_derctions(t_input *tok, char *cmd)
         return (NULL);
     while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
-    tmp = tmp->next;
     while (tmp && tmp->type != PIPE)
     {
-        if (tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT)
+        if ((tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT) && tmp->next)
         {
             new_redir = ft_malloc(sizeof(t_redir), 0);
             new_redir->filename = ft_strdup(tmp->next->value);
@@ -161,7 +163,6 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 	while(tok != NULL)
     {
         new_cmd = ft_malloc(sizeof(t_command), 0);
-        new_cmd->cmd = ft_strdup((tok)->value);
         new_cmd->args = put_the_args(tok, tok->value);
         new_cmd->heredoc = NULL;
         new_cmd->inoutfile = check_derctions(tok , tok->value);
@@ -249,7 +250,6 @@ int	main(int ac, char **av, char **env)
             {
                     redir =  cmd_list2->inoutfile;
                     printf("command %d:\n", j);
-                    printf("cmd :%s\n", cmd_list2->cmd);
                     printf("args :");
                     if (cmd_list2->args)
                     {

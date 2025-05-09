@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 06:21:03 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 09:30:21 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,9 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	temp = tok;
 	while (temp)
 	{
-		if (temp->type == HEREDOC && temp->next->type == WORD)
+		if (temp->next && temp->type == HEREDOC && temp->next->type == WORD)
 			temp = temp->next;
-		else if (temp->type == HEREDOC && temp->next->type != WORD)
+		else if (temp->next && temp->type == HEREDOC && temp->next->type != WORD)
 		{
 			printf("%s\n", "minishell: syntax error near unexpected token `<<'");
 			break;
@@ -163,11 +163,9 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	}
 	while (tok)
 	{
-		if (tok->type == HEREDOC && tok->next->type == WORD && fd != -2)
-		{
+		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD && fd != -2)
 			unlink(tmp);
-		}
-		if (tok->type == HEREDOC && tok->next->type == WORD)
+		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD)
 		{
 			(*cmd_list)->heredoc = random_str();
 			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
@@ -193,9 +191,35 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			close(saved_stdin);
 			signal(SIGINT, sigint_handler);
 		}
-		else if (tok->type == HEREDOC && tok->next->type != WORD)
+		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC && tok->next->type != WORD))
+		{
+			if (!tok->next)
+				printf("minishell: syntax error near unexpected token `newline'\n");
 			return ;
+		}
 		tok = tok->next;
+	}
+}
+
+void	chek_ambiguous_redirect(t_command **cmd_list)
+{
+	t_command *tmp;
+	t_redir *redir;
+
+	tmp = *cmd_list;
+	while (tmp)
+	{
+		redir = tmp->inoutfile;
+		while (redir)
+		{
+			if (redir->type == HEREDOC && redir->filename == NULL)
+			{
+				printf("minishell: ambiguous redirect\n");
+				exit(1);
+			}
+			redir = redir->next;
+		}
+		tmp = tmp->next;
 	}
 }
 
@@ -217,5 +241,5 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 		exit(1);
 	}
 	handler_heredoc(tok, cmd_list, env);
-	// chek_ambiguous_redirect(cmd_list);
+	chek_ambiguous_redirect(cmd_list);
 }

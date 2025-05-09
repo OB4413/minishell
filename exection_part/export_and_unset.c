@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_and_unset.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/08 10:02:47 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/09 06:44:55 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ void ft_unset(char **args, char ***env, list_env **list)
 {
     (void)env;
     int i;
-    if (!args[0])
+    if (!args[1])
     {
         printf("unset: not enough arguments\n");
         return;
     }
-    i = 0;
+    i = 1;
     (*list) = (*list)->next;
     while(args[i])
     {
@@ -90,7 +90,7 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
     list_env *list2;
     size_t name_len;
     char *new_val;
-    
+
     if(!name)
         return 0;
     name_len = ft_strlen(name);
@@ -183,13 +183,13 @@ void ft_export(char **args, char **env, list_env **list)
 {
 
     int i;
-    i = 0;
-    if (!args[0])
+    i = 1;
+    if (!args[1])
     {
         sorte_table(env);
         return;
     }
-    
+
     while(args[i])
     {
         // if (ft_strstr(args[i], "+=") && strchr(args[i], ' ') == NULL)
@@ -197,7 +197,7 @@ void ft_export(char **args, char **env, list_env **list)
         set_env_var(list, args[i]);
         i++;
 
-        
+
     }
 
 }

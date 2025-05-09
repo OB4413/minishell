@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 15:31:24 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 06:38:43 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ typedef struct s_redir
 
 typedef struct s_command
 {
-	char    *cmd;
     char    **args;
     t_redir *inoutfile;
 	char	*heredoc;

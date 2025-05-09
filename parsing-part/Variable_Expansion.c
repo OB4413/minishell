@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 17:09:39 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 07:00:08 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ void expand_variables(t_input **tok, list_env *env)
 			temp->value = tokn;
 			tokn = NULL;
 		}
-		else if (temp->type == HEREDOC || temp->type == REDIRECT_OUT || temp->type == APPEND)
+		else if ((temp->type == HEREDOC || temp->type == REDIRECT_OUT || temp->type == APPEND) && temp->next)
 			temp = temp->next;
 		temp = temp->next;
 	}

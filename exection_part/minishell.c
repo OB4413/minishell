@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/08 15:47:50 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 09:40:00 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	shell_luncher(t_command *cmdList, char **env)
 	if (pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		if (execve_like_execvp(cmdList->cmd , cmdList->args, env) == -1)
+		if (execve_like_execvp(cmdList->args[0] , cmdList->args, env) == -1)
 			perror("Error");
 		exit(EXIT_FAILURE);
 	}
@@ -76,8 +76,8 @@ void	ft_echo(char **cmdlist)
 	int		i;
 
 	flag = true;
-	i = 0;
-	if (cmdlist[0] && ft_strcmp(cmdlist[0], "-n") == 0)
+	i = 1;
+	if (cmdlist[1] && ft_strcmp(cmdlist[1], "-n") == 0)
 	{
 		flag = false;
 		i++;
@@ -93,19 +93,19 @@ void	ft_echo(char **cmdlist)
 
 void	ft_cd(char **cmdlist)
 {
-	if (!cmdlist[0])
+	if (!cmdlist[1])
 	{
 		printf("cd: missing argument\n");
 		return ;
 	}
-	if (cmdlist[1])
+	if (cmdlist[2])
 	{
 		printf("cd: too many arguments\n");
 		return ;
 	}
-	if (ft_strcmp(cmdlist[0], "~") == 0)
+	if (ft_strcmp(cmdlist[1], "~") == 0)
 		chdir(getenv("HOME"));
-	else if (chdir(cmdlist[0]) != 0)
+	else if (chdir(cmdlist[1]) != 0)
 	{
 		perror("Error ");
 	}
@@ -117,23 +117,22 @@ void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env, char ***
 	// printf("hhhhhhhhhhhhhh");
 	// while(*(env)[i])
 	// 	printf("%s\n", *(env)[i++]);
-	if (ft_strcmp(cmd_list->cmd, "pwd") == 0)
+	if (ft_strcmp(cmd_list->args[0], "pwd") == 0)
 		getworkingdir();
-	else if (ft_strcmp(cmd_list->cmd, "env") == 0)
+	else if (ft_strcmp(cmd_list->args[0], "env") == 0)
 		getenvfunc(*env);
-	else if (ft_strcmp(cmd_list->cmd, "echo") == 0)
+	else if (ft_strcmp(cmd_list->args[0], "echo") == 0)
 		ft_echo(cmd_list->args);
-	else if (ft_strcmp(cmd_list->cmd, "cd") == 0)
+	else if (ft_strcmp(cmd_list->args[0], "cd") == 0)
 		ft_cd(cmd_list->args);
-	else if (ft_strcmp(cmd_list->cmd, "export") == 0)
+	else if (ft_strcmp(cmd_list->args[0], "export") == 0)
 		ft_export(cmd_list->args, *env1, env_list);
-	else if (ft_strcmp(cmd_list->cmd, "unset") == 0)
+	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
 	else
 	{
 		shell_luncher(cmd_list, *env);
 	}
-	// free(cmd_list->cmd);
 }
 
 void	exection(t_command *cmd_list, list_env **env_list)
@@ -161,7 +160,7 @@ void	exection(t_command *cmd_list, list_env **env_list)
 	// while (cmd_list2)
 	// {
 	//         printf("command %d:\n", j);
-	//         printf("cmd :%s\n", cmd_list2->cmd);
+	//         printf("cmd :%s\n", cmd_list2);
 	//         printf("args :");
 	//         for (size_t i = 0; cmd_list2->args[i]; i++)
 	//         {

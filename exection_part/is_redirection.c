@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/08 16:39:53 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/09 09:48:17 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,28 +41,20 @@ int is_redirection(t_command *cmd, list_env **env_list, char ***env, char ***env
         return (0);
 }
 
-void heredoc_redirection(struct s_command *cmd)
+void heredoc_redirection(struct s_command *cmd, list_env **env_list, char ***env, char ***env1)
 {
-    char *line;
-    int pipefd[2];
-    exit(1);
-    line = NULL;
-    if(pipe(pipefd) == -1)
-        return(perror("pipe"));
-    while(1)
-    {
-        line = readline("> ");
-		if (!line)
-			break;
-        if (ft_strncmp(line, cmd->inoutfile->filename, strlen(cmd->inoutfile->filename)) == 0 &&
-            line[strlen(cmd->inoutfile->filename)] == '\n')
-            break;
-        write(pipefd[1], line, strlen(line));
-    }
-    free(line);
-    close(pipefd[1]);
-    dup2(pipefd[0], STDIN_FILENO);
-    close(pipefd[0]);
+    int fd, saved_stdout;
+    saved_stdout = dup(0);
+
+    fd = open(cmd->heredoc, O_RDONLY);
+    if(fd == -1)
+        return(perror("open REDIRECT_IN"));
+    dup2(fd, 0);
+    execute_cmd(cmd, env_list, env, env1);
+    close(fd);
+    dup2(saved_stdout, 0);
+    close(saved_stdout);
+    return ;
 }
 
 void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, char ***env1)
@@ -83,7 +75,7 @@ void in_heredoc_redirs(struct s_command *cmd, list_env **env_list, char ***env, 
         return ;
     }
     else
-        heredoc_redirection(cmd);
+        heredoc_redirection(cmd, env_list, env, env1);
 }
 
 void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***env, char ***env1)
@@ -96,7 +88,6 @@ void execute_piped_commands(t_command *cmd_list, list_env **env_list, char ***en
             execute_cmd(cmd_list, env_list, env, env1);
         return ;
     }
-    printf("weweweew");
     while (cmd_list)
     {
         if (cmd_list->next) // not the last command: create a pipe

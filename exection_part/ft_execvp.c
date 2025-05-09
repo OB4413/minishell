@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 16:07:50 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 06:51:52 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void change_table(char *new_str, char ***tab)
         return;
     tab2[0] = new_str;
     while(++j < i)
-        tab2[j + 1] = (*tab)[j];
+        tab2[j + 1] = (*tab)[j + 1];
     tab2[i + 1] = NULL;
     *tab = tab2;
 }
