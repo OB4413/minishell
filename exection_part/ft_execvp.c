@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execvp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/09 06:51:52 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 10:40:42 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,15 @@ char* search_path(const char *file)
     char **dir = ft_split1(path_copy, ':');
     while(dir[i])
     {
-        full_path = malloc(ft_strlen(dir[i]) + ft_strlen(file) + 2);
+        full_path = ft_malloc((ft_strlen(dir[i]) + ft_strlen(file) + 2), 0);
         full_path = ft_strjoin(dir[i], "/");
         full_path = ft_strjoin(full_path, file);
         if (is_executable(full_path))
         {
-            free(path_copy);
             return full_path;
         }
-        free(full_path);
         i++;
     }
-    free(path_copy);
     return NULL;
 }
 
@@ -53,7 +50,7 @@ void change_table(char *new_str, char ***tab)
     j = -1;
     while ((*tab)[i])
         i++;
-    char **tab2 = malloc((i + 2) * sizeof(char *));
+    char **tab2 = ft_malloc(((i + 2) * sizeof(char *)), 0);
     if (!tab2)
         return;
     tab2[0] = new_str;
@@ -86,6 +83,5 @@ int execve_like_execvp(const char *file, char **argv, char **env)
         return -1;
     }
     int result = execve(full_path, argv, env);
-    free(full_path);
     return result;
 }

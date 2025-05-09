@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 12:23:38 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/08 09:30:25 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/09 10:37:55 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char *ft_strndup(const char *s, size_t n)
         return NULL;
     while (len < n && s[len])
         len++;
-    dup = malloc(len + 1);
+    dup = ft_malloc((len + 1), 0);
     if (!dup)
 	{
         return NULL;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eljamaaouyayman <eljamaaouyayman@studen    +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 01:29:24 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/03/31 04:22:33 by eljamaaouya      ###   ########.fr       */
+/*   Updated: 2025/05/09 10:39:34 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,11 @@ static void	ftstrlcpy(const char *src, char *dst, int c)
 
 static int	safe_malloc(char **s, int k, int c)
 {
-	s[k] = (char *)malloc(c * sizeof(char) + 1);
+	s[k] = (char *)ft_malloc((c * sizeof(char) + 1), 0);
 	if (s[k] == NULL)
 	{
 		while (k >= 0)
 		{
-			free(s[k]);
 			k--;
 		}
 		return (0);
@@ -101,12 +100,11 @@ char	**ft_split1(char const *s, char c)
 	if (s == NULL)
 		return (NULL);
 	words = count_words(s, c);
-	s1 = (char **)malloc((words + 1) * sizeof(char *));
+	s1 = (char **)ft_malloc(((words + 1) * sizeof(char *)), 0);
 	if (s1 == NULL)
 		return (NULL);
 	if (fill(s1, s, c) == 1)
 	{
-		free(s1);
 		return (0);
 	}
 	s1[words] = NULL;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_and_unset.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/09 06:44:55 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 10:40:08 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,7 @@ static void remove_env_var(list_env **list, const char *name)
     list2 = list1->next;
     if(ft_strcmp(list2->key, name) == 0)
     {
-        free(list2->key);
-        free(list2->value);
         list1->next = list2->next;
-        free(list2);
     }
     list1 = list1->next;
     }
@@ -99,8 +96,6 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
     {
         if (ft_strcmp(list2->key, name) == 0 && name_val[name_len] == '=')
         {
-            // exit(0);
-            free(list2->value);
             list2->value = ft_strdup(name_val + (name_len + 1));
             while(list2)
             {
@@ -112,7 +107,6 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
         if (ft_strcmp(list2->key, ft_strndup(name, ft_strlen(name) - 1)) == 0 && name_val[name_len - 1] == '+' && name_val[name_len] == '=')
         {
             new_val = ft_strjoin(list2->value, ft_strdup(name_val + (name_len + 1)));
-            free(list2->value);
             list2->value = new_val;
             list2->equal = 1;
             while(list2)
@@ -132,7 +126,7 @@ static void set_env_var(list_env **list, const char *name_value)
 {
     // list_env *list2;
     // list2 = *list;
-    list_env *node = malloc(sizeof(list_env));
+    list_env *node = ft_malloc((sizeof(list_env)), 0);
     char (*name), (*eq);
     name = NULL;
     eq = ft_strchr(name_value, '=');
@@ -224,7 +218,7 @@ char **list_to_table(list_env *list)
     int i;
     char **env2;
     i = ft_lstsize2(list);
-    env2 = malloc((i + 1) * sizeof(char *));
+    env2 = ft_malloc(((i + 1) * sizeof(char *)), 0);
     i = 0;
     list = list->next;
     while(list)
@@ -250,7 +244,7 @@ char **list_to_table_export(list_env *list)
     int i;
     char **env2;
     i = ft_lstsize2(list);
-    env2 = malloc((i + 1) * sizeof(char *));
+    env2 = ft_malloc(((i + 1) * sizeof(char *)), 0);
     i = 0;
     list = list->next;
     while(list)
