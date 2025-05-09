@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 08:22:23 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 10:39:19 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,10 +134,13 @@ t_redir *check_derctions(t_input *tok, char *cmd)
         tmp = tmp->next;
     while (tmp && tmp->type != PIPE)
     {
-        if ((tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT) && tmp->next)
+        if (tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT)
         {
             new_redir = ft_malloc(sizeof(t_redir), 0);
-            new_redir->filename = ft_strdup(tmp->next->value);
+            if (tmp->next)
+                new_redir->filename = ft_strdup(tmp->next->value);
+            else
+                new_redir->filename = NULL;
             new_redir->type = what_direction(tmp->value);
             new_redir->next = NULL;
             if (redir == NULL)
