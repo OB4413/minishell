@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 09:30:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:25:33 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char *move_quote(char *str)
 	int j = 0;
 
 	tmp = NULL;
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
 		{
@@ -201,10 +201,11 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	}
 }
 
-void	chek_ambiguous_redirect(t_command **cmd_list)
+void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 {
 	t_command *tmp;
 	t_redir *redir;
+	int i = 0;
 
 	tmp = *cmd_list;
 	while (tmp)
@@ -212,10 +213,22 @@ void	chek_ambiguous_redirect(t_command **cmd_list)
 		redir = tmp->inoutfile;
 		while (redir)
 		{
-			if (redir->type == HEREDOC && redir->filename == NULL)
+			if (redir->type == 2 || redir->type == 0)
 			{
-				printf("minishell: ambiguous redirect\n");
-				exit(1);
+				redir->filename = help_expand_variables(redir->filename, env);
+				redir->filename = move_quote(redir->filename);
+				if (redir->filename && redir->filename[0] != '\'')
+				{
+					while(redir->filename[i])
+					{
+						if (redir->filename[i] <= 32)
+						{
+							printf("minishell: ambiguous redirect\n");
+							exit(1);
+						}
+						i++;
+					}
+				}
 			}
 			redir = redir->next;
 		}
@@ -241,5 +254,5 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 		exit(1);
 	}
 	handler_heredoc(tok, cmd_list, env);
-	chek_ambiguous_redirect(cmd_list);
+	chek_ambiguous_redirect(cmd_list, env);
 }
