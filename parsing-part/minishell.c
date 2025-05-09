@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 17:51:56 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 06:11:57 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 void sigint_handler(int signal)
 {
     if (signal == SIGINT)
-        printf("\nminishell$hhhhhhhh ");
+        printf("\nminishell$ ");
 }
 
 char **cpy_env(char **env)
@@ -267,7 +267,9 @@ int	main(int ac, char **av, char **env)
                     cmd_list2 = cmd_list2->next;
                     j++;
             }
-            // exection(cmd_list, &env_list);
+            exection(cmd_list, &env_list);
+            cmd_list = NULL;
+            tok = NULL;
 		}
 	}
     ft_malloc(1, 1);

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 17:09:29 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 06:21:03 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,12 +130,22 @@ void	remove_quote(char **str)
 	*str = tmp;
 }
 
+void	handl_2(int sig)
+{
+	if (sig == SIGINT)
+	{
+		printf("\n");
+		close(0);
+	}
+}
+
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 {
 	int fd;
 	char *str;
 	char *tmp;
 	t_input *temp;
+	int saved_stdin;
 
 	fd = -2;
 	temp = tok;
@@ -167,8 +177,10 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				exit(1);
 			}
 			tmp = move_quote(tok->next->value);
+			saved_stdin = dup(STDIN_FILENO);
+			signal(SIGINT, handl_2);
 			str = readline("> ");
-			if (tmp[0] != '"' && tmp[0] != '\'')
+			if (tmp[0] != '"' && tmp[0] != '\'' && str)
 					expand_heredoc(&str, env);
 			remove_quote(&tmp);
 			while (str && ft_strcmp(str, tmp) != 0)
@@ -177,6 +189,9 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				write(fd, "\n", 1);
 				str = readline("> ");
 			}
+			dup2(saved_stdin, STDIN_FILENO);
+			close(saved_stdin);
+			signal(SIGINT, sigint_handler);
 		}
 		else if (tok->type == HEREDOC && tok->next->type != WORD)
 			return ;
