@@ -3,26 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/09 09:40:00 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:05:32 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-void	getworkingdir(void)
+void	getworkingdir(list_env **list)
 {
 	char	cwd[1024];
 
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	{
 		printf("%s\n", cwd);
+		(*list)->value = "0";
+	}
 	else
+	{
 		perror("getcwd() error");
+		(*list)->value = "1";
+	}
 }
 
-void	getenvfunc(char **env)
+void	getenvfunc(char **env, list_env **env_list)
 {
 	// list_to_table(env_list);
 
@@ -34,7 +40,7 @@ void	getenvfunc(char **env)
 			printf("%s\n", env[i]);
 		i++;
 	}
-	printf("this is from env");
+	(*env_list)->value = "0";
 }
 
 void	shell_luncher(t_command *cmdList, char **env)
@@ -70,7 +76,7 @@ void	shell_luncher(t_command *cmdList, char **env)
 	}
 }
 
-void	ft_echo(char **cmdlist)
+void	ft_echo(char **cmdlist, list_env **env_list)
 {
 	bool	flag;
 	int		i;
@@ -89,42 +95,43 @@ void	ft_echo(char **cmdlist)
 	}
 	if (flag)
 		printf("\n");
+	(*env_list)->value = "0";
 }
 
-void	ft_cd(char **cmdlist)
+void	ft_cd(char **cmdlist, list_env **env_list)
 {
 	if (!cmdlist[1])
 	{
 		printf("cd: missing argument\n");
+		(*env_list)->value = "1";
 		return ;
 	}
 	if (cmdlist[2])
 	{
 		printf("cd: too many arguments\n");
+		(*env_list)->value = "1";
 		return ;
 	}
 	if (ft_strcmp(cmdlist[1], "~") == 0)
 		chdir(getenv("HOME"));
 	else if (chdir(cmdlist[1]) != 0)
 	{
-		perror("Error ");
+		(*env_list)->value = "1";
+		return(perror("Error "));
 	}
+	(*env_list)->value = "0";
 }
 
 void execute_cmd(t_command *cmd_list, list_env **env_list, char ***env, char ***env1)
 {
-	// int i = 0;
-	// printf("hhhhhhhhhhhhhh");
-	// while(*(env)[i])
-	// 	printf("%s\n", *(env)[i++]);
 	if (ft_strcmp(cmd_list->args[0], "pwd") == 0)
-		getworkingdir();
+		getworkingdir(env_list);
 	else if (ft_strcmp(cmd_list->args[0], "env") == 0)
-		getenvfunc(*env);
+		getenvfunc(*env, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "echo") == 0)
-		ft_echo(cmd_list->args);
+		ft_echo(cmd_list->args, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "cd") == 0)
-		ft_cd(cmd_list->args);
+		ft_cd(cmd_list->args, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "export") == 0)
 		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)

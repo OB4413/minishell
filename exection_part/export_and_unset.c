@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/09 10:40:08 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:57:27 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,6 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
         if (ft_strcmp(list2->key, name) == 0 && name_val[name_len] == '=')
         {
             list2->value = ft_strdup(name_val + (name_len + 1));
-            while(list2)
-            {
-                printf("%s=%s\n", list2->key, list2->value);
-                list2 = list2->next;
-            }
             return 1;
         }
         if (ft_strcmp(list2->key, ft_strndup(name, ft_strlen(name) - 1)) == 0 && name_val[name_len - 1] == '+' && name_val[name_len] == '=')
@@ -109,11 +104,6 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
             new_val = ft_strjoin(list2->value, ft_strdup(name_val + (name_len + 1)));
             list2->value = new_val;
             list2->equal = 1;
-            while(list2)
-            {
-                printf("%s=%s\n", list2->key, list2->value);
-                list2 = list2->next;
-            }
             return 1;
         }
         list2 = list2->next;
@@ -124,10 +114,9 @@ static int find_env_var(list_env **list, const char *name, const char *name_val)
 // Helper to add/replace an env var
 static void set_env_var(list_env **list, const char *name_value)
 {
-    // list_env *list2;
-    // list2 = *list;
-    list_env *node = ft_malloc((sizeof(list_env)), 0);
+    list_env (*node);
     char (*name), (*eq);
+    node = ft_malloc((sizeof(list_env)), 0);
     name = NULL;
     eq = ft_strchr(name_value, '=');
     if (eq)
@@ -181,19 +170,15 @@ void ft_export(char **args, char **env, list_env **list)
     if (!args[1])
     {
         sorte_table(env);
+        (*list)->key = 0;
         return;
     }
-
     while(args[i])
     {
-        // if (ft_strstr(args[i], "+=") && strchr(args[i], ' ') == NULL)
-        //     add_to_env_var(list, args[i]);
         set_env_var(list, args[i]);
         i++;
-
-
     }
-
+    (*list)->key = 0;
 }
 
 int	ft_lstsize2(list_env *lst)
@@ -233,9 +218,6 @@ char **list_to_table(list_env *list)
         list = list->next;
     }
     env2[i] = NULL;
-    // i = 0;
-    // while(env2[i])
-    //     printf("%s\n", env2[i++]);
     return env2;
 }
 
@@ -246,7 +228,7 @@ char **list_to_table_export(list_env *list)
     i = ft_lstsize2(list);
     env2 = ft_malloc(((i + 1) * sizeof(char *)), 0);
     i = 0;
-    list = list->next;
+    // list = list->next;
     while(list)
     {
         if(list->equal == 1 && list->value)
@@ -259,8 +241,5 @@ char **list_to_table_export(list_env *list)
         list = list->next;
     }
     env2[i] = NULL;
-    // i = 0;
-    // while(env2[i])
-    //     printf("%s\n", env2[i++]);
     return env2;
 }

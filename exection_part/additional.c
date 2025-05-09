@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 05:34:35 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/06 17:50:48 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/09 12:53:46 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 {
 	size_t	i;
 
+	if(s1 == NULL || s2 == NULL)
+		return (-1);
 	i = 0;
 	while (s1[i] || s2[i])
 	{
