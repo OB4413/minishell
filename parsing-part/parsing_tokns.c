@@ -6,11 +6,13 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 15:25:33 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/11 14:47:29 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
+int c_or_d = 0;
 
 char *random_str()
 {
@@ -50,7 +52,9 @@ void	expand_heredoc(char **str, list_env *env)
 			i++;
 		}
 	}
-	*str = tmp;
+	*str = "\0";
+	if (tmp)
+		*str = tmp;
 }
 char *move_quote(char *str)
 {
@@ -87,11 +91,6 @@ char *move_quote(char *str)
 					}
 					tmp = ft_strjoin_c(tmp, tmp[0]);
 				}
-				else
-				{
-					printf("minishell: syntax error near unexpected token `%s'\n", str);
-					exit(1);
-				}
 				return (tmp);
 			}
 		}
@@ -107,7 +106,7 @@ void	remove_quote(char **str)
 	char qoute;
 
 	tmp = NULL;
-	while ((*str)[i])
+	while (*str && (*str)[i])
 	{
 		if((*str)[i] == '"' || (*str)[i] == '\'')
 		{
@@ -132,11 +131,11 @@ void	remove_quote(char **str)
 
 void	handl_2(int sig)
 {
-	if (sig == SIGINT)
-	{
-		printf("\n");
-		close(0);
-	}
+	(void)sig;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	close(0);
+	c_or_d = 1;
 }
 
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
@@ -145,7 +144,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	char *str;
 	char *tmp;
 	t_input *temp;
-	int saved_stdin;
+	static int j = 0;
+	int b = 0;
 
 	fd = -2;
 	temp = tok;
@@ -175,30 +175,64 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				exit(1);
 			}
 			tmp = move_quote(tok->next->value);
-			saved_stdin = dup(STDIN_FILENO);
 			signal(SIGINT, handl_2);
-			str = readline("> ");
+			j++;
+			write(1, "> ", 1);
+			str = get_next_line(0);
+			str = ft_strtrim(str, "\n");
 			if (tmp[0] != '"' && tmp[0] != '\'' && str)
-					expand_heredoc(&str, env);
+			{
+				b = 2;
+				expand_heredoc(&str, env);
+			}
+			else if (tmp[0] == '"' || tmp[0] == '\'')
+			{
+				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
+				{
+					b = -100;
+					tmp = NULL;
+				}
+			}
 			remove_quote(&tmp);
 			while (str && ft_strcmp(str, tmp) != 0)
 			{
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);
-				str = readline("> ");
+				j++;
+				write(1, "> ", 1);
+				str = get_next_line(0);
+				str = ft_strtrim(str, "\n");
+				if (b && str)
+					expand_heredoc(&str, env);
 			}
-			dup2(saved_stdin, STDIN_FILENO);
-			close(saved_stdin);
-			signal(SIGINT, sigint_handler);
+			if (!str && c_or_d == 0)
+			{
+				if (b == -100)
+				{
+					(*cmd_list)->heredoc = ft_strdup("ctrlC");
+					printf("\nminishell: unexpected EOF while looking for matching \"\'\n");
+					printf("minishell: syntax error: unexpected end of file\n");
+				}
+				else
+					printf("\nminishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
+			}
+			open("/dev/tty", O_RDONLY);
+			if (!str && c_or_d == 1)
+			{
+				(*cmd_list)->heredoc = ft_strdup("ctrlC");
+				c_or_d = 0;
+				break;
+			}
 		}
 		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC && tok->next->type != WORD))
 		{
 			if (!tok->next)
-				printf("minishell: syntax error near unexpected token `newline'\n");
+			printf("\nminishell: syntax error near unexpected token `newline'\n");
 			return ;
 		}
 		tok = tok->next;
 	}
+	close(fd);
 }
 
 void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
@@ -213,7 +247,7 @@ void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 		redir = tmp->inoutfile;
 		while (redir)
 		{
-			if (redir->type == 2 || redir->type == 0)
+			if (redir->type == 2 || redir->type == 1)
 			{
 				redir->filename = help_expand_variables(redir->filename, env);
 				redir->filename = move_quote(redir->filename);

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 12:02:05 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/08 08:35:14 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/11 08:41:08 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 	i = 0;
 	if(!s1 || !s2)
-		return (0);
+		return (-1);
 	while (s1[i] || s2[i])
 	{
 		if (s1[i] != s2[i])

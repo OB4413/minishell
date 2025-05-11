@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 13:00:12 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/11 14:25:07 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,8 +188,11 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 
 void sigint_handler(int signal)
 {
-    if (signal == SIGINT)
-        printf("\nminishell$ ");
+    (void)signal;
+    write(1, "\n", 1);
+    rl_replace_line("", 0);
+    rl_on_new_line();
+    rl_redisplay();
 }
 
 char **cpy_env(char **env)
@@ -230,7 +233,13 @@ int	main(int ac, char **av, char **env)
 	{
         signal(SIGINT, sigint_handler);
         signal(SIGQUIT, SIG_IGN);
-		line = readline("minishell$ ");
+        if (!isatty(STDIN_FILENO))
+        {
+            line = get_next_line(0);
+            line = ft_strtrim(line, "\n");
+        }
+        else
+		    line = readline("minishell$ ");
 		if (!line)
         {
             printf("Exit\n");

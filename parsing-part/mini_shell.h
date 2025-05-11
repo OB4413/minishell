@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 15:14:01 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:15:23 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <unistd.h>
 # include <stdbool.h>
 # include <signal.h>
+
 
 typedef enum e_input_type
 {
@@ -76,5 +77,6 @@ char *ft_strjoin_c(char *s1, char c);
 char	**ft_split_7(char const *s);
 void	*ft_malloc(size_t size, int type);
 char *help_expand_variables(char *str, list_env *env);
+char     *get_next_line(int fd);
 
 #endif
