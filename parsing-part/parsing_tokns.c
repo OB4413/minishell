@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/11 18:04:00 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/11 21:44:12 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,14 @@ void	handl_2(int sig)
 	c_or_d = 1;
 }
 
+void	signl_1(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 {
 	int fd;
@@ -177,9 +185,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			tmp = move_quote(tok->next->value);
 			signal(SIGINT, handl_2);
 			j++;
-			write(1, "> ", 1);
-			str = get_next_line(0);
-			str = ft_strtrim(str, "\n");
+			str = readline("> ");
 			if (tmp[0] != '"' && tmp[0] != '\'' && str)
 			{
 				b = 2;
@@ -199,9 +205,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);
 				j++;
-				write(1, "> ", 1);
-				str = get_next_line(0);
-				str = ft_strtrim(str, "\n");
+				readline("> ");
 				if (b && str)
 					expand_heredoc(&str, env);
 			}
@@ -232,6 +236,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 		}
 		tok = tok->next;
 	}
+	signal(SIGINT, signl_1);
 	close(fd);
 }
 
