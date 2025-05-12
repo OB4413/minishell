@@ -6,7 +6,11 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/05/12 16:55:07 by obarais          ###   ########.fr       */
+=======
+/*   Updated: 2025/05/12 17:02:40 by obarais          ###   ########.fr       */
+>>>>>>> b9d73654a9be4d5e6d476b77e3bb9d2782587514
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +73,8 @@ void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
 {
 	int (fd), (saved_stdout);
 	saved_stdout = dup(0);
+	if(ft_strcmp(cmd->heredoc, "ctrlC") == 0)
+		return;
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 		return (perror("open REDIRECT_IN"));
@@ -85,6 +91,8 @@ void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
 {
 	int (fd), (saved_stdout);
 	saved_stdout = dup(0);
+	if(ft_strcmp(cmd->inoutfile->filename, "ctrlC") == 0)
+		return ;
 	if (cmd->inoutfile->type == 0)
 	{
 		fd = open(cmd->inoutfile->filename, O_RDONLY);
