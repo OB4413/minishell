@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/11 21:44:12 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 14:15:35 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,17 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				exit(1);
 			}
 			tmp = move_quote(tok->next->value);
+			if (tmp[0] == '"' || tmp[0] == '\'')
+			{
+				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
+				{
+					b = -100;
+					(*cmd_list)->heredoc = ft_strdup("ctrlC");
+					printf("minishell: unexpected EOF while looking for matching \"\'\n");
+					printf("minishell: syntax error: unexpected end of file\n");
+					break;
+				}
+			}
 			signal(SIGINT, handl_2);
 			j++;
 			str = readline("> ");
@@ -191,35 +202,18 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				b = 2;
 				expand_heredoc(&str, env);
 			}
-			else if (tmp[0] == '"' || tmp[0] == '\'')
-			{
-				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
-				{
-					b = -100;
-					tmp = NULL;
-				}
-			}
 			remove_quote(&tmp);
-			while (str && ft_strcmp(str, tmp) != 0)
+			while (str && ft_strcmp(str, tmp) != 0 && b != -100)
 			{
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);
 				j++;
-				readline("> ");
+				str = readline("> ");
 				if (b && str)
 					expand_heredoc(&str, env);
 			}
 			if (!str && c_or_d == 0)
-			{
-				if (b == -100)
-				{
-					(*cmd_list)->heredoc = ft_strdup("ctrlC");
-					printf("\nminishell: unexpected EOF while looking for matching \"\'\n");
-					printf("minishell: syntax error: unexpected end of file\n");
-				}
-				else
-					printf("\nminishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
-			}
+				printf("minishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
 			open("/dev/tty", O_RDONLY);
 			if (!str && c_or_d == 1)
 			{
@@ -231,7 +225,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC && tok->next->type != WORD))
 		{
 			if (!tok->next)
-			printf("\nminishell: syntax error near unexpected token `newline'\n");
+			printf("minishell: syntax error near unexpected token `newline'\n");
 			return ;
 		}
 		tok = tok->next;
