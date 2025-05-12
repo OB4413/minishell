@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/09 19:22:07 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/12 16:09:25 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,26 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 {
 	t_command	*cmd2;
 
-	int (fd), (flags), (saved_stdout);
+	int (fd), (flags), (saved_stdout), (i);
 	saved_stdout = dup(1);
 	cmd2 = cmd;
 	if (cmd2->inoutfile && (cmd2->inoutfile->type == 1
 			|| cmd2->inoutfile->type == 2))
 	{
+		// printf("------%s------", cmd2->inoutfile->filename);
+		i = 0;
+		while(i <= 32)
+		{
+			if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
+				return ((*env_list)->value = "1", 1);
+			i++;
+		}
 		flags = get_flags(cmd2);
 		fd = open(cmd2->inoutfile->filename, flags, 0644);
 		if (fd == -1)
 			return (perror("fd error :"), 1);
 		if (dup2(fd, 1) == -1)
-			return (perror("dup2 failed"), 0);
+			return (perror("dup2 failed"), 1);
 		close(fd);
 		execute_cmd(cmd, env_list, env, env1);
 		dup2(saved_stdout, 1);
@@ -58,6 +66,8 @@ void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
 {
 	int (fd), (saved_stdout);
 	saved_stdout = dup(0);
+	if(ft_strcmp(cmd->heredoc, "ctrlC") == 0)
+		return;
 	fd = open(cmd->heredoc, O_RDONLY);
 	if (fd == -1)
 		return (perror("open REDIRECT_IN"));
@@ -101,6 +111,7 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 	{
 		if (is_redirection(cmd_list, env_list, env, env1) != 1)
 			execute_cmd(cmd_list, env_list, env, env1);
+
 		return ;
 	}
 	while (cmd_list)

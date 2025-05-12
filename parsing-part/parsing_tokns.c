@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_tokns.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/12 14:15:35 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 15:16:00 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 						if (redir->filename[i] <= 32)
 						{
 							printf("minishell: ambiguous redirect\n");
-							exit(1);
+							break;
 						}
 						i++;
 					}
