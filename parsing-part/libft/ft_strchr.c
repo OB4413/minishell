@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 22:00:18 by obarais           #+#    #+#             */
-/*   Updated: 2024/10/27 10:29:12 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:22:56 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*ft_strchr(const char *s, int c)
 	char	ch;
 	size_t	i;
 
+	if (!s)
+		return (NULL);
 	ch = (char)c;
 	i = 0;
 	while (s[i] != '\0')

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell_exec.h"
 
 static void	ftstrlcpy(const char *src, char *dst, int c)

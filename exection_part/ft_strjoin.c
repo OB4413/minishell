@@ -12,7 +12,6 @@
 
 #include "minishell_exec.h"
 
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	int		i;
@@ -27,8 +26,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		return (ft_strdup(s2));
 	if (!s2)
 		return (ft_strdup(s1));
-	r = (char *)ft_malloc((sizeof(char)
-			* (ft_strlen(s1) + ft_strlen(s2)) + 1), 0);
+	r = (char *)ft_malloc((sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1),
+			0);
 	if (!r)
 		return (NULL);
 	while (s1[i])
