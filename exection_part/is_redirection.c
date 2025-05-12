@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/12 16:17:04 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 16:55:07 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 		char ***env1, char *file)
 {
 	t_command	*cmd2;
+	int i;
 
 	int (fd), (flags), (saved_stdout);
 	saved_stdout = dup(1);
@@ -34,6 +35,16 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 	if (cmd2->inoutfile && (cmd2->inoutfile->type == 1
 			|| cmd2->inoutfile->type == 2))
 	{
+		i = 0;
+		while((i <= 32))
+		{
+			if(((i >= 7 && i <= 13) || i == 32))
+			{
+				if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
+					return ((*env_list)->value = "1", 1);
+			}
+			i++;
+		}
 		flags = get_flags(cmd2);
 		fd = open(cmd2->inoutfile->filename, flags, 0644);
 		if (fd == -1)
