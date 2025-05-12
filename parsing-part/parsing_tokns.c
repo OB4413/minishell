@@ -6,11 +6,13 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 09:30:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 14:15:35 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
+int c_or_d = 0;
 
 char *random_str()
 {
@@ -50,7 +52,9 @@ void	expand_heredoc(char **str, list_env *env)
 			i++;
 		}
 	}
-	*str = tmp;
+	*str = "\0";
+	if (tmp)
+		*str = tmp;
 }
 char *move_quote(char *str)
 {
@@ -59,7 +63,7 @@ char *move_quote(char *str)
 	int j = 0;
 
 	tmp = NULL;
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
 		{
@@ -87,11 +91,6 @@ char *move_quote(char *str)
 					}
 					tmp = ft_strjoin_c(tmp, tmp[0]);
 				}
-				else
-				{
-					printf("minishell: syntax error near unexpected token `%s'\n", str);
-					exit(1);
-				}
 				return (tmp);
 			}
 		}
@@ -107,7 +106,7 @@ void	remove_quote(char **str)
 	char qoute;
 
 	tmp = NULL;
-	while ((*str)[i])
+	while (*str && (*str)[i])
 	{
 		if((*str)[i] == '"' || (*str)[i] == '\'')
 		{
@@ -132,11 +131,19 @@ void	remove_quote(char **str)
 
 void	handl_2(int sig)
 {
-	if (sig == SIGINT)
-	{
-		printf("\n");
-		close(0);
-	}
+	(void)sig;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	close(0);
+	c_or_d = 1;
+}
+
+void	signl_1(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
@@ -145,7 +152,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	char *str;
 	char *tmp;
 	t_input *temp;
-	int saved_stdin;
+	static int j = 0;
+	int b = 0;
 
 	fd = -2;
 	temp = tok;
@@ -175,36 +183,62 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				exit(1);
 			}
 			tmp = move_quote(tok->next->value);
-			saved_stdin = dup(STDIN_FILENO);
+			if (tmp[0] == '"' || tmp[0] == '\'')
+			{
+				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
+				{
+					b = -100;
+					(*cmd_list)->heredoc = ft_strdup("ctrlC");
+					printf("minishell: unexpected EOF while looking for matching \"\'\n");
+					printf("minishell: syntax error: unexpected end of file\n");
+					break;
+				}
+			}
 			signal(SIGINT, handl_2);
+			j++;
 			str = readline("> ");
 			if (tmp[0] != '"' && tmp[0] != '\'' && str)
-					expand_heredoc(&str, env);
+			{
+				b = 2;
+				expand_heredoc(&str, env);
+			}
 			remove_quote(&tmp);
-			while (str && ft_strcmp(str, tmp) != 0)
+			while (str && ft_strcmp(str, tmp) != 0 && b != -100)
 			{
 				write(fd, str, strlen(str));
 				write(fd, "\n", 1);
+				j++;
 				str = readline("> ");
+				if (b && str)
+					expand_heredoc(&str, env);
 			}
-			dup2(saved_stdin, STDIN_FILENO);
-			close(saved_stdin);
-			signal(SIGINT, sigint_handler);
+			if (!str && c_or_d == 0)
+				printf("minishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
+			open("/dev/tty", O_RDONLY);
+			if (!str && c_or_d == 1)
+			{
+				(*cmd_list)->heredoc = ft_strdup("ctrlC");
+				c_or_d = 0;
+				break;
+			}
 		}
 		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC && tok->next->type != WORD))
 		{
 			if (!tok->next)
-				printf("minishell: syntax error near unexpected token `newline'\n");
+			printf("minishell: syntax error near unexpected token `newline'\n");
 			return ;
 		}
 		tok = tok->next;
 	}
+	signal(SIGINT, signl_1);
+	close(fd);
 }
 
-void	chek_ambiguous_redirect(t_command **cmd_list)
+void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 {
 	t_command *tmp;
 	t_redir *redir;
+	int i = 0;
 
 	tmp = *cmd_list;
 	while (tmp)
@@ -212,10 +246,22 @@ void	chek_ambiguous_redirect(t_command **cmd_list)
 		redir = tmp->inoutfile;
 		while (redir)
 		{
-			if (redir->type == HEREDOC && redir->filename == NULL)
+			if (redir->type == 2 || redir->type == 1)
 			{
-				printf("minishell: ambiguous redirect\n");
-				exit(1);
+				redir->filename = help_expand_variables(redir->filename, env);
+				redir->filename = move_quote(redir->filename);
+				if (redir->filename && redir->filename[0] != '\'')
+				{
+					while(redir->filename[i])
+					{
+						if (redir->filename[i] <= 32)
+						{
+							printf("minishell: ambiguous redirect\n");
+							exit(1);
+						}
+						i++;
+					}
+				}
 			}
 			redir = redir->next;
 		}
@@ -241,5 +287,5 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 		exit(1);
 	}
 	handler_heredoc(tok, cmd_list, env);
-	chek_ambiguous_redirect(cmd_list);
+	chek_ambiguous_redirect(cmd_list, env);
 }

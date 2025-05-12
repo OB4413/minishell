@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 06:38:43 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/11 12:15:23 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <unistd.h>
 # include <stdbool.h>
 # include <signal.h>
+
 
 typedef enum e_input_type
 {
@@ -54,7 +55,7 @@ typedef struct s_list_env
 typedef struct s_redir
 {
     char *filename;
-    int   type;
+    int   type; // 0 input 1 output 2 APPAND 3 HEREDOC
     struct s_redir *next;
 }					t_redir;
 
@@ -75,5 +76,7 @@ char	*get_value(char *str, list_env *env);
 char *ft_strjoin_c(char *s1, char c);
 char	**ft_split_7(char const *s);
 void	*ft_malloc(size_t size, int type);
+char *help_expand_variables(char *str, list_env *env);
+char     *get_next_line(int fd);
 
 #endif

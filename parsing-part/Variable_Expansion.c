@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 07:00:08 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:22:29 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,59 @@ char *ft_check_quote(char *str, list_env *env, char q)
 	{
 		printf("Error: Unmatched quotes\n");
 		exit(1);
+	}
+	return (tokn);
+}
+
+char *help_expand_variables(char *str, list_env *env)
+{
+	int i;
+	int start;
+	char	*tokn;
+
+	i = 0;
+	tokn = NULL;
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+		{
+			i++;
+			if (str[i] >= 48 && str[i] <= 57 && i++)
+				continue;
+			start = i;
+			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+				i++;
+			tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i-start), env));
+		}
+		else if (str[i] == '"')
+		{
+			tokn = ft_strjoin_c(tokn, '\'');
+			start = i;
+			i++;
+			while (str[i] && str[i] != '"')
+				i++;
+			if(str[i])
+				i++;
+			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i-start), env, '"'));
+			tokn = ft_strjoin_c(tokn, '\'');
+		}
+		else if (str[i] == '\'')
+		{
+			tokn = ft_strjoin_c(tokn, str[i]);
+			start = i;
+			i++;
+			while (str[i] && str[i] != '\'')
+				i++;
+			if(str[i])
+				i++;
+			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i-start), env, '\''));
+			tokn = ft_strjoin_c(tokn, str[i-1]);
+		}
+		else
+		{
+			tokn = ft_strjoin_c(tokn, str[i]);
+			i++;
+		}
 	}
 	return (tokn);
 }

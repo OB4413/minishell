@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/10 17:00:52 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:35:16 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
 {
 	pid_t	pid;
 	int		status;
-	int		sig;
+	// int		sig;
 
 	pid = fork();
 	if (pid == 0)
@@ -67,14 +67,13 @@ void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
 		if (WIFEXITED(status))
         	(*env_list)->value = ft_itoa(WEXITSTATUS(status));
 		if (WIFSIGNALED(status))
-		{
-			printf("%d", WTERMSIG(status));
-			sig = WTERMSIG(status);
-			if (sig == SIGINT)
-				printf("\n");
+        {
+            int sig = WTERMSIG(status);
+            if (sig == SIGINT)
+                printf("\n");
 			else if (sig == SIGQUIT)
 				printf("Quit (core dumped)\n");
-		}
+        }
 		signal(SIGINT, sigint_handler);
 	}
 }
@@ -145,6 +144,7 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 	{
 		shell_luncher(cmd_list, *env, env_list);
 	}
+	signal(SIGINT, sigint_handler);
 }
 
 void	exection(t_command *cmd_list, list_env **env_list)
