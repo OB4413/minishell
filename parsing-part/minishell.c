@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/11 21:42:40 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 14:45:59 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,14 @@ void	ft_list_env(char **env, list_env **env_list)
 		{
 			c = ft_atoi(new_env->value);
 			c++;
-			new_env->value = ft_strdup(ft_itoa(c));
+            if (c > 999)
+            {
+                printf("warning: shell level (%d) too high, resetting to 1\n", c);
+                c = 1;
+            }
+            else if(c < 0)
+                c = 0;
+            new_env->value = ft_strdup(ft_itoa(c));
 		}
         new_env->equal = 1;
         new_env->next = NULL;
