@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/09 19:22:07 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/12 16:06:18 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int get_flags(t_command *cmd2)
 }
 
 int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
-		char ***env1)
+		char ***env1, char *file)
 {
 	t_command	*cmd2;
 
@@ -48,17 +48,17 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 	}
 	else if (cmd2->inoutfile && (cmd2->inoutfile->type == 0
 			|| cmd2->inoutfile->type == 3))
-		return (in_heredoc_redirs(cmd, env_list, env, env1), 1);
+		return (in_heredoc_redirs(cmd, env_list, env, env1, file), 1);
 	else
 		return (0);
 }
 
 void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
-		char ***env, char ***env1)
+		char ***env, char ***env1, char *file)
 {
 	int (fd), (saved_stdout);
 	saved_stdout = dup(0);
-	fd = open(cmd->heredoc, O_RDONLY);
+	fd = open(file, O_RDONLY);
 	if (fd == -1)
 		return (perror("open REDIRECT_IN"));
 	dup2(fd, 0);
@@ -70,7 +70,7 @@ void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
 }
 
 void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
-		char ***env, char ***env1)
+		char ***env, char ***env1, char *file)
 {
 	int (fd), (saved_stdout);
 	saved_stdout = dup(0);
@@ -87,7 +87,7 @@ void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
 		return ;
 	}
 	else
-		heredoc_redirection(cmd, env_list, env, env1);
+		heredoc_redirection(cmd, env_list, env, env1, file);
 }
 
 void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
@@ -95,11 +95,12 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 {
 	pid_t	pid;
 
+	char *file = cmd_list->heredoc;
 	int (pipe_fd[2]), (prev_fd);
 	prev_fd = -1;
 	if (!cmd_list->next)
 	{
-		if (is_redirection(cmd_list, env_list, env, env1) != 1)
+		if (is_redirection(cmd_list, env_list, env, env1, file) != 1)
 			execute_cmd(cmd_list, env_list, env, env1);
 		return ;
 	}
@@ -126,7 +127,7 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 				close(pipe_fd[0]);
 				close(pipe_fd[1]);
 			}
-			if (is_redirection(cmd_list, env_list, env, env1) != 1)
+			if (is_redirection(cmd_list, env_list, env, env1, file) != 1)
 				execute_cmd(cmd_list, env_list, env, env1);
 			exit(1);
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/10 17:35:15 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/12 16:05:54 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,11 @@ void	exection(struct s_command *cmd_list, struct s_list_env **env_list);
 char	**list_to_table(list_env *list);
 char	*ft_strstr(char *str, char *to_find);
 int		is_redirection(t_command *cmd, list_env **env_list, char ***env,
-			char ***env1);
+			char ***env1, char *file);
 void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
-			char ***env, char ***env1);
+			char ***env, char ***env1, char *file);
 void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
-			char ***env, char ***env1);
+			char ***env, char ***env1, char *file);
 void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 			char ***env1);
 void	sorte_table(char **arr, int size);
