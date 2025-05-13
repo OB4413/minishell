@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/12 17:02:40 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/12 19:42:44 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,22 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 		char ***env1, char *file)
 {
 	t_command	*cmd2;
+	int i;
 
-	int (fd), (flags), (saved_stdout), (i);
+	int (fd), (flags), (saved_stdout);
 	saved_stdout = dup(1);
 	cmd2 = cmd;
 	if (cmd2->inoutfile && (cmd2->inoutfile->type == 1
 			|| cmd2->inoutfile->type == 2))
 	{
 		i = 0;
-		while(i <= 32)
+		while((i <= 32))
 		{
-			if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
-				return ((*env_list)->value = "1", 1);
+			if(((i >= 7 && i <= 13) || i == 32))
+			{
+				if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
+					return ((*env_list)->value = "1", 1);
+			}
 			i++;
 		}
 		flags = get_flags(cmd2);
@@ -46,7 +50,7 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 		if (fd == -1)
 			return (perror("fd error :"), 1);
 		if (dup2(fd, 1) == -1)
-			return (perror("dup2 failed"), 1);
+			return (perror("dup2 failed"), 0);
 		close(fd);
 		execute_cmd(cmd, env_list, env, env1);
 		dup2(saved_stdout, 1);
@@ -113,7 +117,6 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 	{
 		if (is_redirection(cmd_list, env_list, env, env1, file) != 1)
 			execute_cmd(cmd_list, env_list, env, env1);
-
 		return ;
 	}
 	while (cmd_list)

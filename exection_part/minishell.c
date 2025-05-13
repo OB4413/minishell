@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/13 14:18:45 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:24:50 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,6 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 	{
 		shell_luncher(cmd_list, *env, env_list);
 	}
-	signal(SIGINT, sigint_handler);
 }
 
 void	exection(t_command *cmd_list, list_env **env_list)

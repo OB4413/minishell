@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_tokns.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/12 15:16:00 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/13 08:10:22 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,18 +132,9 @@ void	remove_quote(char **str)
 void	handl_2(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
+	write(1, "\n",1);
 	close(0);
 	c_or_d = 1;
-}
-
-void	signl_1(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
 }
 
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
@@ -153,6 +144,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	char *tmp;
 	t_input *temp;
 	static int j = 0;
+	int status;
 	int b = 0;
 
 	fd = -2;
@@ -171,55 +163,68 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	}
 	while (tok)
 	{
-		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD && fd != -2)
-			unlink(tmp);
 		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD)
 		{
+			if (fd != -2)
+				unlink(tmp);
 			(*cmd_list)->heredoc = random_str();
 			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (fd == -1)
 			{
 				printf("minishell: i can not open the file\n");
-				exit(1);
+				return;
 			}
 			tmp = move_quote(tok->next->value);
 			if (tmp[0] == '"' || tmp[0] == '\'')
 			{
 				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
 				{
-					b = -100;
 					(*cmd_list)->heredoc = ft_strdup("ctrlC");
 					printf("minishell: unexpected EOF while looking for matching \"\'\n");
 					printf("minishell: syntax error: unexpected end of file\n");
 					break;
 				}
 			}
-			signal(SIGINT, handl_2);
-			j++;
-			str = readline("> ");
-			if (tmp[0] != '"' && tmp[0] != '\'' && str)
+			pid_t	pid = fork();
+			if (pid == 0)
 			{
-				b = 2;
-				expand_heredoc(&str, env);
-			}
-			remove_quote(&tmp);
-			while (str && ft_strcmp(str, tmp) != 0 && b != -100)
-			{
-				write(fd, str, strlen(str));
-				write(fd, "\n", 1);
+				signal(SIGINT, SIG_DFL);
 				j++;
 				str = readline("> ");
-				if (b && str)
+				if (tmp[0] != '"' && tmp[0] != '\'' && str)
+				{
+					b = 2;
 					expand_heredoc(&str, env);
+				}
+				remove_quote(&tmp);
+				while (str && ft_strcmp(str, tmp) != 0)
+				{
+					write(fd, str, strlen(str));
+					write(fd, "\n", 1);
+					j++;
+					str = readline("> ");
+					if (b == 2 && str)
+						expand_heredoc(&str, env);
+				}
+				if (!str)
+					printf("minishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
+				exit(0);
 			}
-			if (!str && c_or_d == 0)
-				printf("minishell: warning: here-document at line %d delimited by end-of-file (wanted `%s')\n", j, tmp);
-			open("/dev/tty", O_RDONLY);
-			if (!str && c_or_d == 1)
+			else
 			{
-				(*cmd_list)->heredoc = ft_strdup("ctrlC");
-				c_or_d = 0;
-				break;
+				signal(SIGINT, SIG_IGN);
+				waitpid(pid, &status, 0);
+				signal(SIGINT, sigint_handler);
+				if (WIFSIGNALED(status))
+				{
+					int sig = WTERMSIG(status);
+					if (sig == SIGINT)
+					{
+						(*cmd_list)->heredoc = ft_strdup("ctrlC");
+						printf("\n");
+						break;
+					}
+				}
 			}
 		}
 		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC && tok->next->type != WORD))
@@ -229,9 +234,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			return ;
 		}
 		tok = tok->next;
+		close(fd);
 	}
-	signal(SIGINT, signl_1);
-	close(fd);
 }
 
 void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/09 15:22:29 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/13 09:36:21 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 char	*get_value(char *str, list_env *env)
 {
+	printf("str = %s\n", str);
 	while (env)
 	{
 		if (ft_strcmp(env->key, str) == 0)
@@ -104,14 +105,18 @@ char *ft_check_quote(char *str, list_env *env, char q)
 			i++;
 			while (str[i] && str[i] != '"')
 			{
-				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?'))
 				{
 					i++;
 					if (str[i] >= 48 && str[i] <= 57 && i++)
 						continue;
 					start = i;
-					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?'))
+					{
 						i++;
+						if (str[i - 1] == '?' && start--)
+							break ;
+					}
 					tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i - start), env));
 					if (str[i] && str[i] == '"')
 						i++;
@@ -214,15 +219,22 @@ void expand_variables(t_input **tok, list_env *env)
 		{
 			while (temp->value[i])
 			{
-				if (temp->value[i] == '$' && temp->value[i + 1] && (ft_isalnum(temp->value[i + 1]) || temp->value[i + 1] == '_'))
+				if (temp->value[i] == '$' && temp->value[i + 1] && (ft_isalnum(temp->value[i + 1]) || temp->value[i + 1] == '_'|| temp->value[i + 1] == '?'))
 				{
 					i++;
 					if (temp->value[i] >= 48 && temp->value[i] <= 57 && i++)
 						continue;
 					start = i;
-					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_'))
+					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_' || temp->value[i] == '?'))
+					{
 						i++;
-					tokn = split_to_tokens(tokn, &temp, ft_split_7(get_value(ft_substr(temp->value, start, i-start), env)));
+						if (temp->value[i - 1] == '?' && start--)
+							break ;
+					}
+					if (temp->value[i - 1] == '?')
+						tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value, start, i-start), env));
+					else
+						tokn = split_to_tokens(tokn, &temp, ft_split_7(get_value(ft_substr(temp->value, start, i-start), env)));
 				}
 				else if (temp->value[i] == '"')
 				{
