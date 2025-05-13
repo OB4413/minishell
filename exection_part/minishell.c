@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/12 14:35:16 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:18:45 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,9 @@
 
 void	getworkingdir(list_env **list)
 {
-	char	cwd[1024];
 
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		printf("%s\n", cwd);
-		(*list)->value = "0";
-	}
-	else
-	{
-		perror("getcwd() error");
-		(*list)->value = "1";
-	}
+	printf("%s\n", ft_getenv(list, "PWD")->value);
+
 }
 
 void	getenvfunc(char **env, list_env **env_list)
@@ -100,6 +91,34 @@ void	ft_echo(char **cmdlist, list_env **env_list)
 	(*env_list)->value = "0";
 }
 
+list_env *ft_getenv(list_env **env_list, char *str)
+{
+	list_env *list;
+
+	list = *env_list;
+	while(list)
+	{
+		if (ft_strcmp((list)->key, str) == 0)
+			return (list);
+		list = (list)->next;
+	}
+	return (NULL);
+}
+char *change_dir()
+{
+	char *cwd = malloc(1024);
+	if (!cwd)
+		return (NULL);
+
+	if (getcwd(cwd, 1024) == NULL)
+	{
+		perror("getcwd() error");
+		free(cwd);
+		return (NULL);
+	}
+	// printf("\n%s\n", cwd);
+	return (cwd);
+}
 void	ft_cd(char **cmdlist, list_env **env_list)
 {
 	if (!cmdlist[1])
@@ -122,6 +141,10 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 		return (write(1, "cd: ", 4), write(1, cmdlist[1],
 		ft_strlen(cmdlist[1])), write(1, ": ", 2) , perror(""));
 	}
+	ft_getenv(env_list, "OLDPWD")->value = ft_strdup(
+	ft_getenv(env_list, "PWD")->value);
+	printf("%s", ft_strdup(change_dir()));
+	ft_getenv(env_list, "PWD")->value = ft_strdup(change_dir());
 	(*env_list)->value = "0";
 }
 
