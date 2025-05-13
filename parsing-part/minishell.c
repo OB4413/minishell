@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/12 14:45:59 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/13 06:11:01 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,9 +236,9 @@ int	main(int ac, char **av, char **env)
 	if (ac != 1)
 		return (printf("Error: Too many arguments\n"), 1);
 	ft_list_env(env, &env_list);
-    signal(SIGINT, sigint_handler);
 	while(1)
 	{
+        signal(SIGINT, sigint_handler);
         signal(SIGQUIT, SIG_IGN);
         if (!isatty(STDIN_FILENO))
         {
