@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/12 14:34:58 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:28:41 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ char	*search_path(const char *file)
 void	change_table(char *new_str, char ***tab)
 {
 	char	**tab2;
+
 
 	int (i), (j);
 	i = 0;
