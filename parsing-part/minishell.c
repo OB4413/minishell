@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 17:17:05 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:27:33 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char ** put_the_args(t_input *tok, char *cmd)
     while (ft_strcmp(tmp->value, cmd) != 0)
         tmp = tmp->next;
     tmp2 = tmp;
-    while(tmp2 && tmp2->type != PIPE && tmp2->value)
+    while(tmp2 && tmp2->type != PIPE)
     {
         if (tmp2->type == HEREDOC || tmp2->type == APPEND || tmp2->type == REDIRECT_IN || tmp2->type == REDIRECT_OUT)
         {
@@ -93,11 +93,10 @@ char ** put_the_args(t_input *tok, char *cmd)
         i++;
         tmp2 = tmp2->next;
     }
-    printf("%d\n", i);
     args = ft_malloc(sizeof(char *) * (i + 1), 0);
     if (args == NULL)
         return (NULL);
-    while (tmp  && tmp->type != PIPE && tmp->value)
+    while (tmp  && tmp->type != PIPE)
     {
         if (tmp->type == HEREDOC || tmp->type == APPEND || tmp->type == REDIRECT_IN || tmp->type == REDIRECT_OUT)
         {
@@ -266,9 +265,6 @@ int	main(int ac, char **av, char **env)
                 tok = NULL;
                 continue;
             }
-
-
-
 
             int j = 1;
             t_command *cmd_list2 = cmd_list;

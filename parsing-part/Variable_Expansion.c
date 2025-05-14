@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 09:03:07 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/14 18:27:01 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,31 +60,34 @@ char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 	int i;
 
 	i = 0;
-	temp2 = (*temp)->next;
-	temp3 = (*temp)->value;
-	if(!str || !str[0])
-		return (tokn);
-	tokn = ft_strjoin(tokn, str[i]);
-	(*temp)->value = tokn;
-	(*temp)->type = WORD;
-	tokn = NULL;
-	i++;
-	while (str[i] && str[i + 1])
+	if (str[1])
 	{
+		temp2 = (*temp)->next;
+		temp3 = (*temp)->value;
+		if(!str || !str[0])
+			return (tokn);
+		tokn = ft_strjoin(tokn, str[i]);
+		(*temp)->value = tokn;
+		(*temp)->type = WORD;
+		tokn = NULL;
+		i++;
+		while (str[i] && str[i + 1])
+		{
+			new = ft_malloc(sizeof(t_input), 0);
+			new->value = ft_strdup(str[i]);
+			new->type = WORD;
+			new->next = NULL;
+			(*temp)->next = new;
+			(*temp) = (*temp)->next;
+			i++;
+		}
 		new = ft_malloc(sizeof(t_input), 0);
-		new->value = ft_strdup(str[i]);
 		new->type = WORD;
-		new->next = NULL;
+		new->value = temp3;
 		(*temp)->next = new;
 		(*temp) = (*temp)->next;
-		i++;
+		(*temp)->next = temp2;
 	}
-	new = ft_malloc(sizeof(t_input), 0);
-	new->type = WORD;
-	new->value = temp3;
-	(*temp)->next = new;
-	(*temp) = (*temp)->next;
-	(*temp)->next = temp2;
 	return (str[i]);
 }
 
