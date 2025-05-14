@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/12 19:42:05 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/13 14:25:01 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,6 @@ int		ft_lstsize2(list_env *lst);
 void	execute_piped_commands(t_command *cmd, list_env **env_list, char ***env,
 			char ***env1);
 char	**list_to_table_export(list_env *list);
+list_env *ft_getenv(list_env **env_list, char *str);
 
 #endif
