@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_and_unset.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/12 11:33:41 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:55:04 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,6 @@ int ft_contains(char *str)
 		name = ft_strndup(str, eq - str);
 	else
 		name = ft_strdup(str);
-	write(1, name, ft_strlen(name));
 	if(ft_isdigit(str[0]) == 1)
 		return (-1);
 	while(i < 127)
@@ -211,7 +210,7 @@ void	ft_export(char **args, char **env, list_env **list)
 	{
 		if(ft_contains(args[i]) == -1)
 		{
-			printf("export : not valid identifier\n");
+			write(2, "export : not a valid identifier\n", 31);
 			// continue;
 		}
 		else

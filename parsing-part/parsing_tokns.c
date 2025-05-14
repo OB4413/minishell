@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/13 08:10:22 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:02:43 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,7 +273,7 @@ void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 	}
 }
 
-void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
+int 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 {
 	t_input *tmp;
 	int i = 0;
@@ -287,9 +287,28 @@ void 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 	}
 	if (i > 16)
 	{
-		printf("minishell: maximum here-document count exceeded\n");
-		exit(1);
+		write(2, "minishell: maximum here-document count exceeded\n", 49);
+		exit(2);
+	}
+	tmp = tok;
+	if (tmp->type == PIPE)
+	{
+		write(2, "minishell: syntax error near unexpected token `|'\n", 50);
+		env->value = ft_strdup("2");
+		return (1);
+	}
+	tmp = tmp->next;
+	while (tmp)
+	{
+		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE ))
+		{
+			write(2, "minishell: syntax error near unexpected token `|'\n", 50);
+			env->value = ft_strdup("2");
+			return (1);
+		}
+		tmp = tmp->next;
 	}
 	handler_heredoc(tok, cmd_list, env);
 	chek_ambiguous_redirect(cmd_list, env);
+	return (0);
 }
