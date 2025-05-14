@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 18:13:47 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:29:53 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,34 +266,31 @@ int	main(int ac, char **av, char **env)
                 continue;
             }
 
-
-
-
-            // int j = 1;
-            // t_command *cmd_list2 = cmd_list;
-            // t_redir  *redir =  cmd_list2->inoutfile;
-            // printf("%s\n", cmd_list2->heredoc);
-            // while (cmd_list2)
-            // {
-            //         redir =  cmd_list2->inoutfile;
-            //         printf("command %d:\n", j);
-            //         printf("args :");
-            //         if (cmd_list2->args)
-            //         {
-            //             for (size_t i = 0; cmd_list2->args[i]; i++)
-            //             {
-            //                 printf("[%s]  ", cmd_list2->args[i]);
-            //             }
-            //         }
-            //         printf("\n");
-            //         while(redir)
-            //         {
-            //             printf("filename :[%s]   type:[%d]\n",  redir->filename, redir->type);
-            //             redir = redir->next;
-            //         }
-            //         cmd_list2 = cmd_list2->next;
-            //         j++;
-            // }
+            int j = 1;
+            t_command *cmd_list2 = cmd_list;
+            t_redir  *redir =  cmd_list2->inoutfile;
+            printf("%s\n", cmd_list2->heredoc);
+            while (cmd_list2)
+            {
+                    redir =  cmd_list2->inoutfile;
+                    printf("command %d:\n", j);
+                    printf("args :");
+                    if (cmd_list2->args)
+                    {
+                        for (size_t i = 0; cmd_list2->args[i]; i++)
+                        {
+                            printf("[%s]  ", cmd_list2->args[i]);
+                        }
+                    }
+                    printf("\n");
+                    while(redir)
+                    {
+                        printf("filename :[%s]   type:[%d]\n",  redir->filename, redir->type);
+                        redir = redir->next;
+                    }
+                    cmd_list2 = cmd_list2->next;
+                    j++;
+            }
             exection(cmd_list, &env_list);
             cmd_list = NULL;
             tok = NULL;
