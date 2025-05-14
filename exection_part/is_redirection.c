@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/12 19:42:44 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:46:12 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,37 @@ int get_flags(t_command *cmd2)
 	else
 		flags = O_WRONLY | O_CREAT | O_APPEND;
 	return (flags);
+}
+
+int multiple_out(t_command **cmd2, int flags)
+{
+	t_command *cmd = *cmd2;
+	t_redir *file = cmd->inoutfile;
+	t_redir *last = NULL;
+	int fd;
+
+	while (file)
+	{
+		if (file->type == 1 || file->type == 2)
+		{
+			fd = open(file->filename, flags, 0644);
+			if (fd == -1)
+			{
+				perror("open");
+				return -1;
+			}
+			close(fd);
+			last = file;
+		}
+		if (file->next && file->next->type != 1 && file->next->type != 2)
+			return (write(2 ,"no such file or directory\n", 26), -1);
+		file = file->next;
+	}
+
+	if (last)
+		cmd->inoutfile = last;
+
+	return 1;
 }
 
 int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
@@ -46,6 +77,8 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 			i++;
 		}
 		flags = get_flags(cmd2);
+		if (multiple_out(&cmd2, flags) != 1)
+			return 1;
 		fd = open(cmd2->inoutfile->filename, flags, 0644);
 		if (fd == -1)
 			return (perror("fd error :"), 1);
