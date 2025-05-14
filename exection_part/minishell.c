@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 15:16:11 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/14 16:29:28 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	ft_echo(char **cmdlist, list_env **env_list)
 	{
 		printf("%s", cmdlist[i]);
 		if (cmdlist[i + 1])
-			printf("\n");
+			printf(" ");
 		i++;
 	}
 	if (flag)
@@ -125,11 +125,11 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 {
 	if (!cmdlist[1])
 	{
-		printf("cd: missing argument\n");
+		write(2, "cd: missing argument\n", 22);
 		(*env_list)->value = "1";
 		return ;
 	}
-	if (cmdlist[2])
+	if (cmdlist[2] && cmdlist[2][0])
 	{
 		printf("cd: too many arguments\n");
 		(*env_list)->value = "1";
@@ -145,9 +145,15 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	}
 	ft_getenv(env_list, "OLDPWD")->value = ft_strdup(
 	ft_getenv(env_list, "PWD")->value);
-	printf("%s", ft_strdup(change_dir()));
 	ft_getenv(env_list, "PWD")->value = ft_strdup(change_dir());
 	(*env_list)->value = "0";
+}
+
+void ft_exit(char **args)
+{
+	int i;
+
+	i = ft_atoi(args[1]) % 256;
 }
 
 void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
@@ -165,6 +171,8 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
+	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
+		ft_exit(cmd_list->args);
 	else
 	{
 		shell_luncher(cmd_list, *env, env_list);

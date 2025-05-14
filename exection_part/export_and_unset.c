@@ -3,20 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export_and_unset.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/05/14 15:16:21 by ael-jama         ###   ########.fr       */
-=======
-/*   Updated: 2025/05/14 14:55:04 by obarais          ###   ########.fr       */
->>>>>>> 1445b1a7478f177cec8d20c166ab9e18b32b82ba
+/*   Updated: 2025/05/14 16:09:29 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-static void	remove_env_var(list_env **list, const char *name)
+static int	remove_env_var(list_env **list, const char *name)
 {
 	list_env	(*list1), (*list2);
 	list1 = *list;
@@ -26,29 +22,28 @@ static void	remove_env_var(list_env **list, const char *name)
 		if (ft_strcmp(list2->key, name) == 0)
 		{
 			list1->next = list2->next;
+			return (0);
 		}
 		list1 = list1->next;
 	}
 	list2 = *list;
-	while (list2)
-	{
-		printf("%s=%s\n", list2->key, list2->value);
-		list2 = list2->next;
-	}
+	return (0);
 }
 
 void	ft_unset(char **args, char ***env, list_env **list)
 {
 	int	i;
+	list_env *tmp;
 
 	(void)env;
+	tmp = *list;
 	if (!args[1])
 	{
-		printf("unset: not enough arguments\n");
+		(*list)->value = ft_strdup("0");
 		return ;
 	}
 	i = 1;
-	(*list) = (*list)->next;
+	tmp = tmp->next;
 	while (args[i])
 	{
 		if (strchr(args[i], '='))
@@ -56,7 +51,7 @@ void	ft_unset(char **args, char ***env, list_env **list)
 			printf("unset: `%s': not a valid identifier\n", args[i]);
 			continue ;
 		}
-		remove_env_var(list, args[i]);
+		(*list)->value = ft_strdup(ft_itoa(remove_env_var(&tmp, args[i])));
 		i++;
 	}
 }
@@ -206,7 +201,7 @@ void	ft_export(char **args, char **env, list_env **list)
 	if (!args[1])
 	{
 		sorte_table(env, i);
-		(*list)->value = "0";
+		(*list)->value = ft_strdup("0");
 		return ;
 	}
 	i = 1;
@@ -214,15 +209,15 @@ void	ft_export(char **args, char **env, list_env **list)
 	{
 		if(ft_contains(args[i]) == -1 || ft_strcmp(args[i], "=") == 0)
 		{
-			printf("export : not a valid identifier\n");
-			(*list)->value = "1";
-			// printf("hhhh");
+			write(2, " not a valid identifier\n", 25);
+			(*list)->value = ft_strdup("1");
+			return ;
 		}
 		else
 			set_env_var(list, args[i]);
 		i++;
 	}
-	(*list)->value = "0";
+	(*list)->value = ft_strdup("0");
 }
 
 int	ft_lstsize2(list_env *lst)
