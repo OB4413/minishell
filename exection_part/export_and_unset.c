@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/12 11:33:41 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:16:21 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,22 +203,23 @@ void	ft_export(char **args, char **env, list_env **list)
 	if (!args[1])
 	{
 		sorte_table(env, i);
-		(*list)->value = 0;
+		(*list)->value = "0";
 		return ;
 	}
 	i = 1;
 	while (args[i])
 	{
-		if(ft_contains(args[i]) == -1)
+		if(ft_contains(args[i]) == -1 || ft_strcmp(args[i], "=") == 0)
 		{
 			printf("export : not valid identifier\n");
-			// continue;
+			(*list)->value = "1";
+			// printf("hhhh");
 		}
 		else
 			set_env_var(list, args[i]);
 		i++;
 	}
-	(*list)->value = 0;
+	(*list)->value = "0";
 }
 
 int	ft_lstsize2(list_env *lst)
