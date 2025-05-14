@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/14 14:19:56 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:19:38 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,6 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 		}
 		else
 		{
-			waitpid(pid, NULL, 0);
 			if (prev_fd != -1)
 				close(prev_fd);
 			if (cmd_list->next)
@@ -192,4 +191,6 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 			cmd_list = cmd_list->next;
 		}
 	}
+	while (waitpid(0, NULL, 0) > 0)
+		;
 }

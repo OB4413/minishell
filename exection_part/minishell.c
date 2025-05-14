@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/13 14:24:50 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:16:11 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,9 @@ void	ft_echo(char **cmdlist, list_env **env_list)
 	}
 	while (cmdlist[i])
 	{
-		printf("%s ", cmdlist[i]);
+		printf("%s", cmdlist[i]);
+		if (cmdlist[i + 1])
+			printf("\n");
 		i++;
 	}
 	if (flag)

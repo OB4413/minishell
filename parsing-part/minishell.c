@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/13 06:11:01 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/14 14:25:42 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ int	main(int ac, char **av, char **env)
 	cmd_list = NULL;
 	tok = NULL;
 	if (ac != 1)
-		return (printf("Error: Too many arguments\n"), 1);
+		return (write(2, "Error: Too many arguments\n", 27), 127);
 	ft_list_env(env, &env_list);
 	while(1)
 	{
@@ -249,7 +249,7 @@ int	main(int ac, char **av, char **env)
 		    line = readline("minishell$ ");
 		if (!line)
         {
-            printf("Exit\n");
+            printf("exit\n");
             break;
         }
 		if (strlen(line) > 0)
@@ -259,33 +259,37 @@ int	main(int ac, char **av, char **env)
 			tokenization(line, &tok);
 			expand_variables(&tok, env_list);
 			list_commands(tok, &cmd_list);
-            parsing_tokns(tok, &cmd_list, env_list);
-
-            int j = 1;
-            t_command *cmd_list2 = cmd_list;
-            t_redir  *redir =  cmd_list2->inoutfile;
-            printf("%s\n", cmd_list2->heredoc);
-            while (cmd_list2)
+            if (parsing_tokns(tok, &cmd_list, env_list) == 1)
             {
-                    redir =  cmd_list2->inoutfile;
-                    printf("command %d:\n", j);
-                    printf("args :");
-                    if (cmd_list2->args)
-                    {
-                        for (size_t i = 0; cmd_list2->args[i]; i++)
-                        {
-                            printf("%s  ", cmd_list2->args[i]);
-                        }
-                    }
-                    printf("\n");
-                    while(redir)
-                    {
-                        printf("filename :%s   type:%d\n",  redir->filename, redir->type);
-                        redir = redir->next;
-                    }
-                    cmd_list2 = cmd_list2->next;
-                    j++;
+                cmd_list = NULL;
+                tok = NULL;
+                continue;
             }
+            // int j = 1;
+            // t_command *cmd_list2 = cmd_list;
+            // t_redir  *redir =  cmd_list2->inoutfile;
+            // printf("%s\n", cmd_list2->heredoc);
+            // while (cmd_list2)
+            // {
+            //         redir =  cmd_list2->inoutfile;
+            //         printf("command %d:\n", j);
+            //         printf("args :");
+            //         if (cmd_list2->args)
+            //         {
+            //             for (size_t i = 0; cmd_list2->args[i]; i++)
+            //             {
+            //                 printf("[%s]  ", cmd_list2->args[i]);
+            //             }
+            //         }
+            //         printf("\n");
+            //         while(redir)
+            //         {
+            //             printf("filename :[%s]   type:[%d]\n",  redir->filename, redir->type);
+            //             redir = redir->next;
+            //         }
+            //         cmd_list2 = cmd_list2->next;
+            //         j++;
+            // }
             exection(cmd_list, &env_list);
             cmd_list = NULL;
             tok = NULL;

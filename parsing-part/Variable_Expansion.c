@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/13 09:36:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/14 09:03:07 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 char	*get_value(char *str, list_env *env)
 {
-	printf("str = %s\n", str);
 	while (env)
 	{
 		if (ft_strcmp(env->key, str) == 0)
