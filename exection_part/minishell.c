@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 16:29:28 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 17:06:36 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 		(*env_list)->value = "1";
 		return ;
 	}
-	if (cmdlist[2] && cmdlist[2][0])
+	if (cmdlist[2])
 	{
 		printf("cd: too many arguments\n");
 		(*env_list)->value = "1";
@@ -149,12 +149,20 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	(*env_list)->value = "0";
 }
 
-void ft_exit(char **args)
-{
-	int i;
+// void ft_exit(char **args, list_env **list)
+// {
+// 	int i;
 
-	i = ft_atoi(args[1]) % 256;
-}
+// 	if(args[1] && args[2])
+// 	{
+// 		write(2, "exit\ntoo many arguments\n", 25);
+// 		(*list)->value = ft_strdup("1");
+// 		return ;
+// 	}
+// 	i = ft_atoi(args[1]) % 256;
+// 	write(1, "exit\n", 5);
+// 	exit(i);
+// }
 
 void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		char ***env1)
@@ -171,8 +179,8 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
-	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
-		ft_exit(cmd_list->args);
+	// else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
+	// 	ft_exit(cmd_list->args, env_list);
 	else
 	{
 		shell_luncher(cmd_list, *env, env_list);
