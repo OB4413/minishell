@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/14 15:19:38 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:38:17 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int multiple_out(t_command **cmd2, int flags)
 			fd = open(file->filename, flags, 0644);
 			if (fd == -1)
 			{
-				perror("open");
+				perror("");
 				return -1;
 			}
 			close(fd);

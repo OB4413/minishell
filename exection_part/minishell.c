@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 18:19:52 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/15 15:00:12 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,24 @@
 
 void	getworkingdir(list_env **list)
 {
-
 	printf("%s\n", ft_getenv(list, "PWD")->value);
-
+	(*list)->value = ft_strdup("0");
 }
 
-void	getenvfunc(char **env, list_env **env_list)
+void	getenvfunc(char **env, list_env **env_list, char **args)
 {
 	int	i;
 
 	i = 0;
+	if (args[1])
+	{
+		write(2, "No such file or directory\n", 27);
+		(*env_list)->value = "1";
+		return ;
+	}
 	while (env[i] != NULL)
 	{
-		if (ft_strchr(env[i], '=') && ((ft_strchr(env[i], '=') + 1)[1] != '\0'))
+		if (ft_strchr(env[i], '=') && ((ft_strchr(env[i], '=')[1]) != '\0'))
 			printf("%s\n", env[i]);
 		i++;
 	}
@@ -44,26 +49,30 @@ void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
 	{
 		signal(SIGQUIT, SIG_DFL);
 		if (execve_like_execvp(cmdList->args[0], cmdList->args, env) == -1)
-			perror("Error");
-		exit(EXIT_FAILURE);
+			write(2, "command not found\n", 19);
+		exit(127);
 	}
 	else if (pid < 0)
 	{
 		perror("Error");
+		(*env_list)->value = ft_strdup("1");
 	}
 	else
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-        	(*env_list)->value = ft_itoa(WEXITSTATUS(status));
+		if (WIFEXITED(status)){
+			int exit_code = WEXITSTATUS(status);
+			(*env_list)->value = ft_itoa(exit_code);
+		}
 		if (WIFSIGNALED(status))
         {
             int sig = WTERMSIG(status);
             if (sig == SIGINT)
-                printf("\n");
+				write(1, "\n", 1);
 			else if (sig == SIGQUIT)
-				printf("Quit (core dumped)\n");
+				write(2, "Quit (core dumped)\n", 20);
+			(*env_list)->value = ft_itoa(128 + sig);
         }
 		signal(SIGINT, sigint_handler);
 	}
@@ -118,7 +127,6 @@ char *change_dir()
 		free(cwd);
 		return (NULL);
 	}
-	// printf("\n%s\n", cwd);
 	return (cwd);
 }
 void	ft_cd(char **cmdlist, list_env **env_list)
@@ -131,7 +139,7 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	}
 	if (cmdlist[2])
 	{
-		printf("cd: too many arguments\n");
+		write(2, "too many arguments\n", 20);
 		(*env_list)->value = "1";
 		return ;
 	}
@@ -140,8 +148,7 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	else if (chdir(cmdlist[1]) != 0)
 	{
 		(*env_list)->value = "1";
-		return (write(1, "cd: ", 4), write(1, cmdlist[1],
-		ft_strlen(cmdlist[1])), write(1, ": ", 2) , perror(""));
+		return (write(1, "cd: ", 4), perror(""));
 	}
 	ft_getenv(env_list, "OLDPWD")->value = ft_strdup(
 	ft_getenv(env_list, "PWD")->value);
@@ -153,6 +160,8 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 // {
 // 	int i;
 
+// 	if (!args[1])
+// 		exit(0);
 // 	if(args[1] && args[2])
 // 	{
 // 		write(2, "exit\ntoo many arguments\n", 25);
@@ -170,7 +179,7 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 	if (ft_strcmp(cmd_list->args[0], "pwd") == 0)
 		getworkingdir(env_list);
 	else if (ft_strcmp(cmd_list->args[0], "env") == 0)
-		getenvfunc(*env, env_list);
+		getenvfunc(*env, env_list, cmd_list->args);
 	else if (ft_strcmp(cmd_list->args[0], "echo") == 0)
 		ft_echo(cmd_list->args, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "cd") == 0)

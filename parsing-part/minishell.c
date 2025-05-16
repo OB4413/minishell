@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 18:29:53 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/15 15:06:55 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	ft_list_env(char **env, list_env **env_list)
 	j = 0;
     new_env = ft_malloc(sizeof(list_env), 0);
     new_env->key = ft_strdup("$?");
-    new_env->value = "0";
+    new_env->value = "1";
     new_env->next = NULL;
     *env_list = new_env;
 	while (env[i])

@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 16:09:29 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:28:01 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,6 @@ void	ft_unset(char **args, char ***env, list_env **list)
 	tmp = tmp->next;
 	while (args[i])
 	{
-		if (strchr(args[i], '='))
-		{
-			printf("unset: `%s': not a valid identifier\n", args[i]);
-			continue ;
-		}
 		(*list)->value = ft_strdup(ft_itoa(remove_env_var(&tmp, args[i])));
 		i++;
 	}

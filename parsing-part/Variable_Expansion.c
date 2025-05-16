@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Variable_Expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 18:27:01 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/15 14:42:31 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 	int i;
 
 	i = 0;
-	if (str[1])
-	{
+	// if (str[1])
+	// {
 		temp2 = (*temp)->next;
 		temp3 = (*temp)->value;
 		if(!str || !str[0])
@@ -87,7 +87,7 @@ char	*split_to_tokens(char *tokn, t_input **temp, char **str)
 		(*temp)->next = new;
 		(*temp) = (*temp)->next;
 		(*temp)->next = temp2;
-	}
+	// }
 	return (str[i]);
 }
 
