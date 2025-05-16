@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/16 15:29:52 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/16 19:37:44 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,6 +289,8 @@ int 	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
 	if (i > 16)
 	{
 		write(2, "minishell: maximum here-document count exceeded\n", 49);
+		ft_malloc(1, 1);
+    	rl_clear_history();
 		exit(2);
 	}
 	tmp = tok;

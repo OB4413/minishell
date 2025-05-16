@@ -6,23 +6,28 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 17:11:47 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/16 20:09:37 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-
-int ft_count_word(char *line)
+void    help_count_word(char *line, int *k , int *i, char *d)
 {
-	int	i;
-	int	j;
-	int k;
-	char d = '\0';
+	(*i)++;
+	if (line[*i] && line[*i] == *d)
+	{
+        *d = '\0';
+		*k = 0;
+		(*i)++;
+	}
+}
+
+int ft_count_word(char *line, int j, int k, char d)
+{
+	int i;
 
 	i = 0;
-	j = 0;
-	k = 0;
 	while (line[i] <= 32 && line[i] != '\0')
 		i++;
 	while (line[i] != '\0')
@@ -42,34 +47,35 @@ int ft_count_word(char *line)
 		}
 		else if (line[i] > 32 && k == 0 && (i == 0 || line[i - 1] <= 32 || line[i - 1] == '|' || ft_strrchr("><", line[i - 1])))
 			j++;
-		i++;
-		if (line[i] && line[i] == d)
-		{
-            d = '\0';
-			k = 0;
-			i++;
-		}
+        help_count_word(line, &k, &i, &d);
 	}
 	return (j);
 }
 
-char *ft_alloc_and_cpy(char *s, int *i)
+char    *help_alloc_and_cpy(char *s, int *i, int start)
 {
-    int start;
-    char q;
+    if (ft_strrchr("><", s[*i]) || s[*i] == '|')
+    {
+        if (s[*i] == '|')
+            return ((*i)++,"|");
+        if (ft_strrchr("><", s[*i]) && s[*i] == s[*i + 1])
+            (*i)++;
+        (*i)++;
+        return (ft_substr(s, start, *i - start));
+    }
+    return (NULL);
+}
 
-    start = *i;
+char *ft_alloc_and_cpy(char *s, int *i, int start)
+{
+    char q;
+    char *word;
+
     while (s[*i])
     {
-        if (ft_strrchr("><", s[*i]) || s[*i] == '|')
-        {
-            if (s[*i] == '|')
-                return ((*i)++,"|");
-            if (ft_strrchr("><", s[*i]) && s[*i] == s[*i + 1])
-                (*i)++;
-            (*i)++;
-            return (ft_substr(s, start, *i - start));
-        }
+        word = help_alloc_and_cpy(s, i, start);
+        if (word)
+            return (word);
         if (s[*i] == '"' || s[*i] == '\'')
         {
             q = s[*i];
@@ -96,7 +102,7 @@ char **split_line(char *line)
 	int words;
     char    **array;
 
-	words = ft_count_word(line);
+	words = ft_count_word(line, 0, 0, '\0');
     array = ft_malloc((words + 1) * sizeof(char *), 0);
 	if (array == NULL)
     return (NULL);
@@ -104,7 +110,7 @@ char **split_line(char *line)
 	{
         while (line[i] && line[i] <= 32)
         i++;
-		array[j] = ft_alloc_and_cpy(line, &i);
+		array[j] = ft_alloc_and_cpy(line, &i, i);
 		if (!array[j])
 			return (NULL);
 		j++;
