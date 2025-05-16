@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/16 09:49:36 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/16 10:24:09 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 	if (!str)
 		return (tokn);
 	str = ft_strjoin(tokn, str);
-	printf("[%s]\n", str);
 	i = 0;
 	temp2 = (*temp)->value;
 	temp1 = (*temp)->next;

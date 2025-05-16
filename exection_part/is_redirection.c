@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/14 15:19:38 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:24:57 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 		char ***env, char ***env1)
 {
 	pid_t	pid;
+	int		status = 0;
 
 	char *file = cmd_list->heredoc;
 	int (pipe_fd[2]), (prev_fd);
@@ -191,6 +192,6 @@ void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
 			cmd_list = cmd_list->next;
 		}
 	}
-	while (waitpid(0, NULL, 0) > 0)
+	while (waitpid(0, &status, 0) > 0)
 		;
 }

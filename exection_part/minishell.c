@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 17:16:40 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:31:33 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	}
 	if (cmdlist[2])
 	{
-		printf("cd: too many arguments\n");
+		write(2, "cd: too many arguments\n", 22);
 		(*env_list)->value = "1";
 		return ;
 	}
@@ -149,20 +149,51 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	(*env_list)->value = "0";
 }
 
-// void ft_exit(char **args, list_env **list)
-// {
-// 	int i;
+int is_number(char *str)
+{
+	int i;
 
-// 	if(args[1] && args[2])
-// 	{
-// 		write(2, "exit\ntoo many arguments\n", 25);
-// 		(*list)->value = ft_strdup("1");
-// 		return ;
-// 	}
-// 	i = ft_atoi(args[1]) % 256;
-// 	write(1, "exit\n", 5);
-// 	exit(i);
-// }
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void ft_exit(char **args, list_env **list)
+{
+	int i;
+
+	if (!args[1])
+	{
+		write(2, "exit\n", 5);
+		exit(ft_atoi((*list)->value));
+	}
+	if(args[1] && args[2])
+	{
+		write(2, "exit\ntoo many arguments\n", 25);
+		(*list)->value = ft_strdup("1");
+		return ;
+	}
+	if (is_number(args[1]))
+	{
+		i = ft_atoi(args[1]) % 256;
+		write(1, "exit\n", 5);
+		exit(i);
+	}
+	else
+	{
+		write(2, "exit\n", 5);
+		write(2, "numeric argument required\n", 26);
+		exit(255);
+	}
+	(*list)->value = ft_strdup("2");
+}
 
 void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		char ***env1)
@@ -179,8 +210,8 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
-	// else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
-	// 	ft_exit(cmd_list->args, env_list);
+	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
+		ft_exit(cmd_list->args, env_list);
 	else
 	{
 		shell_luncher(cmd_list, *env, env_list);

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/13 15:02:43 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/16 15:29:52 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				printf("minishell: i can not open the file\n");
 				return;
 			}
-			tmp = move_quote(tok->next->value);
+			tmp = move_quote(ft_strdup(tok->next->value));
 			if (tmp[0] == '"' || tmp[0] == '\'')
 			{
 				if (tmp[ft_strlen(tmp)- 1] != tmp[0])
@@ -196,6 +196,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 					b = 2;
 					expand_heredoc(&str, env);
 				}
+				tmp = tok->next->value;
 				remove_quote(&tmp);
 				while (str && ft_strcmp(str, tmp) != 0)
 				{
