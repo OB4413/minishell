@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/14 18:27:01 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/16 09:49:36 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,43 +52,77 @@ char *ft_strjoin_c(char *s1, char c)
 	return (str);
 }
 
-char	*split_to_tokens(char *tokn, t_input **temp, char **str)
+char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 {
 	t_input *new;
-	t_input *temp2;
-	char *temp3;
+	t_input *temp1;
+	char *k;
+	char	*temp2;
+	int start;
 	int i;
 
+	if (!str)
+		return (tokn);
+	str = ft_strjoin(tokn, str);
+	printf("[%s]\n", str);
 	i = 0;
-	if (str[1])
-	{
-		temp2 = (*temp)->next;
-		temp3 = (*temp)->value;
-		if(!str || !str[0])
-			return (tokn);
-		tokn = ft_strjoin(tokn, str[i]);
-		(*temp)->value = tokn;
-		(*temp)->type = WORD;
-		tokn = NULL;
+	temp2 = (*temp)->value;
+	temp1 = (*temp)->next;
+	(*temp)->next = NULL;
+	while (tokn && tokn[i])
 		i++;
-		while (str[i] && str[i + 1])
+	while (str[i])
+	{
+		while (!tokn && str[i] && str[i] <= 32)
+			i++;
+		start = i;
+		while (str[i] && str[i] > 32)
+			i++;
+		if (!(*temp)->next)
+		{
+			if (!tokn)
+				(*temp)->value = ft_substr(str, start, i - start);
+			else
+				(*temp)->value = ft_substr(str, 0, i);
+			(*temp)->next = *temp;
+		}
+		else
 		{
 			new = ft_malloc(sizeof(t_input), 0);
-			new->value = ft_strdup(str[i]);
+			new->value = ft_substr(str, start, i - start);
 			new->type = WORD;
-			new->next = NULL;
+			new->next = new;
 			(*temp)->next = new;
 			(*temp) = (*temp)->next;
-			i++;
 		}
-		new = ft_malloc(sizeof(t_input), 0);
-		new->type = WORD;
-		new->value = temp3;
-		(*temp)->next = new;
-		(*temp) = (*temp)->next;
-		(*temp)->next = temp2;
+		while (str[i] && str[i] <= 32)
+			i++;
 	}
-	return (str[i]);
+	if (str[i - 1] <= 32)
+	{
+		if (h)
+		{
+			new = ft_malloc(sizeof(t_input), 0);
+			new->value = temp2;
+			new->type = WORD;
+			(*temp)->next = new;
+			*temp = (*temp)->next;
+			(*temp)->next = temp1;
+			return (NULL);
+		}
+		k = (*temp)->value;
+		(*temp)->value = temp2;
+		(*temp)->next = temp1;
+		return (k);
+	}
+	else
+	{
+		k = (*temp)->value;
+		(*temp)->value = temp2;
+		(*temp)->next = temp1;
+		return (k);
+	}
+	return (NULL);
 }
 
 
@@ -236,7 +270,7 @@ void expand_variables(t_input **tok, list_env *env)
 					if (temp->value[i - 1] == '?')
 						tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value, start, i-start), env));
 					else
-						tokn = split_to_tokens(tokn, &temp, ft_split_7(get_value(ft_substr(temp->value, start, i-start), env)));
+						tokn = split_to_tokens(tokn, &temp, get_value(ft_substr(temp->value, start, i-start), env), temp->value[i]);
 				}
 				else if (temp->value[i] == '"')
 				{
