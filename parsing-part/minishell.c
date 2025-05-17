@@ -6,23 +6,23 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/16 19:36:33 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:08:20 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-void	ft_list_env(char **env, list_env **env_list)
+void	ft_list_env(char **env, t_list_env **env_list)
 {
 	int			i;
 	int			j;
 	int			c;
-	list_env	*new_env;
-	list_env	*tmp;
+	t_list_env	*new_env;
+	t_list_env	*tmp;
 
 	i = 0;
 	j = 0;
-	new_env = ft_malloc(sizeof(list_env), 0);
+	new_env = ft_malloc(sizeof(t_list_env), 0);
 	new_env->key = ft_strdup("$?");
 	new_env->value = "0";
 	new_env->next = NULL;
@@ -32,7 +32,7 @@ void	ft_list_env(char **env, list_env **env_list)
 		j = 0;
 		while (env[i][j] != '=')
 			j++;
-		new_env = ft_malloc(sizeof(list_env), 0);
+		new_env = ft_malloc(sizeof(t_list_env), 0);
 		if (!new_env)
 			return ;
 		new_env->key = ft_substr(env[i], 0, j);
@@ -228,11 +228,11 @@ char	**cpy_env(char **env)
 	return (p);
 }
 
-void	help_main(char *line, list_env **invarmant)
+void	help_main(char *line, t_list_env **invarmant)
 {
 	t_input		*tok;
 	t_command	*cmd_list;
-	list_env	*env_list;
+	t_list_env	*env_list;
 
 	tok = NULL;
 	cmd_list = NULL;
@@ -258,7 +258,7 @@ void	help_main(char *line, list_env **invarmant)
 int	main(int ac, char **av, char **env)
 {
 	char		*line;
-	list_env	*env_list;
+	t_list_env	*env_list;
 
 	(void)av;
 	env_list = NULL;

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/16 18:24:57 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:17:55 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int multiple_out(t_command **cmd2, int flags)
 	return 1;
 }
 
-int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
+int	is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
 		char ***env1, char *file)
 {
 	t_command	*cmd2;
@@ -97,7 +97,7 @@ int	is_redirection(t_command *cmd, list_env **env_list, char ***env,
 		return (0);
 }
 
-void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
+void	heredoc_redirection(struct s_command *cmd, t_list_env **env_list,
 		char ***env, char ***env1, char *file)
 {
 	int (fd), (saved_stdout);
@@ -115,7 +115,7 @@ void	heredoc_redirection(struct s_command *cmd, list_env **env_list,
 	return ;
 }
 
-void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
+void	in_heredoc_redirs(struct s_command *cmd, t_list_env **env_list,
 		char ***env, char ***env1, char *file)
 {
 	int (fd), (saved_stdout);
@@ -138,7 +138,7 @@ void	in_heredoc_redirs(struct s_command *cmd, list_env **env_list,
 		heredoc_redirection(cmd, env_list, env, env1, file);
 }
 
-void	execute_piped_commands(t_command *cmd_list, list_env **env_list,
+void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 		char ***env, char ***env1)
 {
 	pid_t	pid;

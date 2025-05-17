@@ -6,13 +6,13 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 09:41:14 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:20:41 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-char	*get_value(char *str, list_env *env)
+char	*get_value(char *str, t_list_env *env)
 {
 	while (env)
 	{
@@ -124,7 +124,7 @@ char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 	return (NULL);
 }
 
-char	*ft_check_quote(char *str, list_env *env, char q)
+char	*ft_check_quote(char *str, t_list_env *env, char q)
 {
 	int		i;
 	int		start;
@@ -187,7 +187,7 @@ char	*ft_check_quote(char *str, list_env *env, char q)
 	return (tokn);
 }
 
-char	*help_expand_variables(char *str, list_env *env)
+char	*help_expand_variables(char *str, t_list_env *env)
 {
 	int		i;
 	int		start;
@@ -244,7 +244,7 @@ char	*help_expand_variables(char *str, list_env *env)
 	return (tokn);
 }
 
-void	expand_variables(t_input **tok, list_env *env)
+void	expand_variables(t_input **tok, t_list_env *env)
 {
 	int		i;
 	int		start;

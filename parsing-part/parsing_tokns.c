@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 09:32:47 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 11:18:56 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*random_str(void)
 	return (str);
 }
 
-void	expand_heredoc(char **str, list_env *env)
+void	expand_heredoc(char **str, t_list_env *env)
 {
 	char	*tmp;
 	int		i;
@@ -135,7 +135,7 @@ void	remove_quote(char **str)
 	*str = tmp;
 }
 
-void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
+void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 {
 	int			fd;
 	char		*str;
@@ -252,7 +252,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 	}
 }
 
-void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
+void	chek_ambiguous_redirect(t_command **cmd_list, t_list_env *env)
 {
 	t_command	*tmp;
 	t_redir		*redir;
@@ -288,7 +288,7 @@ void	chek_ambiguous_redirect(t_command **cmd_list, list_env *env)
 	}
 }
 
-int	parsing_tokns(t_input *tok, t_command **cmd_list, list_env *env)
+int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
 {
 	t_input	*tmp;
 	int		i;
