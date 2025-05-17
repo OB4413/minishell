@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/16 10:24:09 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 09:41:14 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ char	*ft_check_quote(char *str, list_env *env, char q)
 			while (str[i] && str[i] != '"')
 			{
 				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i
-						+ 1] == '_' || str[i + 1] == '?'))
+							+ 1] == '_' || str[i + 1] == '?'))
 				{
 					i++;
 					if (str[i] >= 48 && str[i] <= 57 && i++)
@@ -198,7 +198,7 @@ char	*help_expand_variables(char *str, list_env *env)
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i
-				+ 1] == '_'))
+					+ 1] == '_'))
 		{
 			i++;
 			if (str[i] >= 48 && str[i] <= 57 && i++)
@@ -262,7 +262,7 @@ void	expand_variables(t_input **tok, list_env *env)
 			{
 				if (temp->value[i] == '$' && temp->value[i + 1]
 					&& (ft_isalnum(temp->value[i + 1]) || temp->value[i
-						+ 1] == '_' || temp->value[i + 1] == '?'))
+							+ 1] == '_' || temp->value[i + 1] == '?'))
 				{
 					i++;
 					if (temp->value[i] >= 48 && temp->value[i] <= 57 && i++)

@@ -6,13 +6,11 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 09:17:57 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 09:32:47 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
-
-int		c_or_d = 0;
 
 char	*random_str(void)
 {
@@ -60,6 +58,7 @@ void	expand_heredoc(char **str, list_env *env)
 	if (tmp)
 		*str = tmp;
 }
+
 char	*move_quote(char *str)
 {
 	char	*tmp;
@@ -136,14 +135,6 @@ void	remove_quote(char **str)
 	*str = tmp;
 }
 
-void	handl_2(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	close(0);
-	c_or_d = 1;
-}
-
 void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 {
 	int			fd;
@@ -183,7 +174,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (fd == -1)
 			{
-				printf("minishell: i can not open the file\n");
+				write(2, "minishell: i can not open the file\n", 36);
 				return ;
 			}
 			tmp = move_quote(ft_strdup(tok->next->value));
@@ -192,8 +183,10 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				if (tmp[ft_strlen(tmp) - 1] != tmp[0])
 				{
 					(*cmd_list)->heredoc = ft_strdup("ctrlC");
-					printf("minishell: unexpected EOF while looking for matching \"\'\n");
-					printf("minishell: syntax error: unexpected end of file\n");
+					write(2, "minishell: unexpected EOF while looking for", 44);
+					write(2, " matching \"\'\n", 14);
+					write(2, "minishell:syntax error:unexpected end of file\n",
+						49);
 					break ;
 				}
 			}
@@ -248,7 +241,10 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, list_env *env)
 				&& tok->next->type != WORD))
 		{
 			if (!tok->next)
-				printf("minishell: syntax error near unexpected token `newline'\n");
+			{
+				write(2, "minishell: syntax error near ", 30);
+				write(2, "unexpected token `newline'\n", 28);
+			}
 			return ;
 		}
 		tok = tok->next;
