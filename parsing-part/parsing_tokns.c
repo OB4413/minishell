@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 11:18:56 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 13:25:21 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	expand_heredoc(char **str, t_list_env *env)
 			i++;
 		}
 	}
-	*str = "\0";
 	if (tmp)
 		*str = tmp;
 }
