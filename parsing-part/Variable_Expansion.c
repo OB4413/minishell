@@ -23,7 +23,7 @@ char	*get_value(char *str, list_env *env)
 	return (NULL);
 }
 
-char *ft_strjoin_c(char *s1, char c)
+char	*ft_strjoin_c(char *s1, char c)
 {
 	char	*str;
 	int		i;
@@ -54,12 +54,12 @@ char *ft_strjoin_c(char *s1, char c)
 
 char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 {
-	t_input *new;
-	t_input *temp1;
-	char *k;
+	t_input	*new;
+	t_input	*temp1;
+	char	*k;
 	char	*temp2;
-	int start;
-	int i;
+	int		start;
+	int		i;
 
 	if (!str)
 		return (tokn);
@@ -124,12 +124,11 @@ char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 	return (NULL);
 }
 
-
-char *ft_check_quote(char *str, list_env *env, char q)
+char	*ft_check_quote(char *str, list_env *env, char q)
 {
-	int i;
-	int start;
-	char *tokn;
+	int		i;
+	int		start;
+	char	*tokn;
 
 	i = 0;
 	tokn = NULL;
@@ -140,19 +139,22 @@ char *ft_check_quote(char *str, list_env *env, char q)
 			i++;
 			while (str[i] && str[i] != '"')
 			{
-				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?'))
+				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i
+						+ 1] == '_' || str[i + 1] == '?'))
 				{
 					i++;
 					if (str[i] >= 48 && str[i] <= 57 && i++)
-						continue;
+						continue ;
 					start = i;
-					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?'))
+					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'
+							|| str[i] == '?'))
 					{
 						i++;
 						if (str[i - 1] == '?' && start--)
 							break ;
 					}
-					tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i - start), env));
+					tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i
+									- start), env));
 					if (str[i] && str[i] == '"')
 						i++;
 				}
@@ -185,25 +187,27 @@ char *ft_check_quote(char *str, list_env *env, char q)
 	return (tokn);
 }
 
-char *help_expand_variables(char *str, list_env *env)
+char	*help_expand_variables(char *str, list_env *env)
 {
-	int i;
-	int start;
+	int		i;
+	int		start;
 	char	*tokn;
 
 	i = 0;
 	tokn = NULL;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+		if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i
+				+ 1] == '_'))
 		{
 			i++;
 			if (str[i] >= 48 && str[i] <= 57 && i++)
-				continue;
+				continue ;
 			start = i;
 			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 				i++;
-			tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i-start), env));
+			tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i - start),
+						env));
 		}
 		else if (str[i] == '"')
 		{
@@ -212,9 +216,10 @@ char *help_expand_variables(char *str, list_env *env)
 			i++;
 			while (str[i] && str[i] != '"')
 				i++;
-			if(str[i])
+			if (str[i])
 				i++;
-			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i-start), env, '"'));
+			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i
+							- start), env, '"'));
 			tokn = ft_strjoin_c(tokn, '\'');
 		}
 		else if (str[i] == '\'')
@@ -224,10 +229,11 @@ char *help_expand_variables(char *str, list_env *env)
 			i++;
 			while (str[i] && str[i] != '\'')
 				i++;
-			if(str[i])
+			if (str[i])
 				i++;
-			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i-start), env, '\''));
-			tokn = ft_strjoin_c(tokn, str[i-1]);
+			tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(str, start, i
+							- start), env, '\''));
+			tokn = ft_strjoin_c(tokn, str[i - 1]);
 		}
 		else
 		{
@@ -238,38 +244,44 @@ char *help_expand_variables(char *str, list_env *env)
 	return (tokn);
 }
 
-void expand_variables(t_input **tok, list_env *env)
+void	expand_variables(t_input **tok, list_env *env)
 {
-	int i;
-	int start;
-	char *tokn;
-	t_input *temp;
+	int		i;
+	int		start;
+	char	*tokn;
+	t_input	*temp;
 
 	temp = *tok;
 	tokn = NULL;
-	while(temp)
+	while (temp)
 	{
 		i = 0;
 		if (temp->value && temp->type == WORD)
 		{
 			while (temp->value[i])
 			{
-				if (temp->value[i] == '$' && temp->value[i + 1] && (ft_isalnum(temp->value[i + 1]) || temp->value[i + 1] == '_'|| temp->value[i + 1] == '?'))
+				if (temp->value[i] == '$' && temp->value[i + 1]
+					&& (ft_isalnum(temp->value[i + 1]) || temp->value[i
+						+ 1] == '_' || temp->value[i + 1] == '?'))
 				{
 					i++;
 					if (temp->value[i] >= 48 && temp->value[i] <= 57 && i++)
-						continue;
+						continue ;
 					start = i;
-					while (temp->value[i] && (ft_isalnum(temp->value[i]) || temp->value[i] == '_' || temp->value[i] == '?'))
+					while (temp->value[i] && (ft_isalnum(temp->value[i])
+							|| temp->value[i] == '_' || temp->value[i] == '?'))
 					{
 						i++;
 						if (temp->value[i - 1] == '?' && start--)
 							break ;
 					}
 					if (temp->value[i - 1] == '?')
-						tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value, start, i-start), env));
+						tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value,
+										start, i - start), env));
 					else
-						tokn = split_to_tokens(tokn, &temp, get_value(ft_substr(temp->value, start, i-start), env), temp->value[i]);
+						tokn = split_to_tokens(tokn, &temp,
+								get_value(ft_substr(temp->value, start, i
+										- start), env), temp->value[i]);
 				}
 				else if (temp->value[i] == '"')
 				{
@@ -277,9 +289,11 @@ void expand_variables(t_input **tok, list_env *env)
 					i++;
 					while (temp->value[i] && temp->value[i] != '"')
 						i++;
-					if(temp->value[i])
+					if (temp->value[i])
 						i++;
-					tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(temp->value, start, i-start), env, '"'));
+					tokn = ft_strjoin(tokn,
+							ft_check_quote(ft_substr(temp->value, start, i
+									- start), env, '"'));
 				}
 				else if (temp->value[i] == '\'')
 				{
@@ -287,9 +301,11 @@ void expand_variables(t_input **tok, list_env *env)
 					i++;
 					while (temp->value[i] && temp->value[i] != '\'')
 						i++;
-					if(temp->value[i])
+					if (temp->value[i])
 						i++;
-					tokn = ft_strjoin(tokn, ft_check_quote(ft_substr(temp->value, start, i-start), env, '\''));
+					tokn = ft_strjoin(tokn,
+							ft_check_quote(ft_substr(temp->value, start, i
+									- start), env, '\''));
 				}
 				else
 				{
@@ -300,7 +316,8 @@ void expand_variables(t_input **tok, list_env *env)
 			temp->value = tokn;
 			tokn = NULL;
 		}
-		else if ((temp->type == HEREDOC || temp->type == REDIRECT_OUT || temp->type == APPEND) && temp->next)
+		else if ((temp->type == HEREDOC || temp->type == REDIRECT_OUT
+				|| temp->type == APPEND) && temp->next)
 			temp = temp->next;
 		temp = temp->next;
 	}

@@ -15,7 +15,7 @@
 void	*ft_malloc(size_t size, int type)
 {
 	static t_list	*head = NULL;
-	t_list *new_node;
+	t_list			*new_node;
 
 	if (type == 0)
 	{
