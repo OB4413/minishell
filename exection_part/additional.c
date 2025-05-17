@@ -40,7 +40,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 // 	}
 // }
 
-
 // void	sorte_table(char **arr, int size)
 // {
 // 	char	(*min);
@@ -69,9 +68,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 void	sorte_table(char **arr, int size)
 {
-	char	(*min);
-
-	int (printed[size]), (min_index), (i), (j);
+	char(*min);
+	int(printed[size]), (min_index), (i), (j);
 	i = 0;
 	while (i < size)
 		printed[i++] = 0;

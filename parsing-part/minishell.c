@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/15 15:06:55 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/16 21:19:05 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	ft_list_env(char **env, list_env **env_list)
 	j = 0;
     new_env = ft_malloc(sizeof(list_env), 0);
     new_env->key = ft_strdup("$?");
-    new_env->value = "1";
+    new_env->value = "0";
     new_env->next = NULL;
     *env_list = new_env;
 	while (env[i])
@@ -37,7 +37,6 @@ void	ft_list_env(char **env, list_env **env_list)
             return ;
         new_env->key = ft_substr(env[i], 0, j);
         new_env->value = ft_substr(env[i], j + 1, ft_strlen(env[i]) - j);
-        // zedt had lIF condition besh ytincrementa shell level :)
         if(ft_strcmp(new_env->key, "SHLVL") == 0)
 		{
 			c = ft_atoi(new_env->value);
@@ -222,17 +221,41 @@ char **cpy_env(char **env)
     return (p);
 }
 
+void help_main(char *line, list_env **invarmant)
+{
+    t_input *tok;
+    t_command *cmd_list;
+    list_env *env_list;
+
+    tok = NULL;
+    cmd_list = NULL;
+    env_list = *invarmant;
+    if (strlen(line) > 0)
+	{
+        add_history(line);
+
+		tokenization(line, &tok);
+		expand_variables(&tok, env_list);
+		list_commands(tok, &cmd_list);
+        if (parsing_tokns(tok, &cmd_list, env_list) == 1)
+        {
+            cmd_list = NULL;
+            tok = NULL;
+            return ;
+        }
+        exection(cmd_list, &env_list);
+        cmd_list = NULL;
+        tok = NULL;
+	}
+}
+
 int	main(int ac, char **av, char **env)
 {
 	(void)av;
 	char	*line;
-	t_input	*tok;
 	list_env	*env_list;
-	t_command	*cmd_list;
 
 	env_list = NULL;
-	cmd_list = NULL;
-	tok = NULL;
 	if (ac != 1)
 		return (write(2, "Error: Too many arguments\n", 27), 127);
 	ft_list_env(env, &env_list);
@@ -240,61 +263,13 @@ int	main(int ac, char **av, char **env)
 	{
         signal(SIGINT, sigint_handler);
         signal(SIGQUIT, SIG_IGN);
-        if (!isatty(STDIN_FILENO))
-        {
-            line = get_next_line(0);
-            line = ft_strtrim(line, "\n");
-        }
-        else
-		    line = readline("minishell$ ");
+		line = readline("minishell$ ");
 		if (!line)
         {
             printf("exit\n");
             break;
         }
-		if (strlen(line) > 0)
-		{
-            add_history(line);
-
-			tokenization(line, &tok);
-			expand_variables(&tok, env_list);
-			list_commands(tok, &cmd_list);
-            if (parsing_tokns(tok, &cmd_list, env_list) == 1)
-            {
-                cmd_list = NULL;
-                tok = NULL;
-                continue;
-            }
-
-            int j = 1;
-            t_command *cmd_list2 = cmd_list;
-            t_redir  *redir =  cmd_list2->inoutfile;
-            printf("%s\n", cmd_list2->heredoc);
-            while (cmd_list2)
-            {
-                    redir =  cmd_list2->inoutfile;
-                    printf("command %d:\n", j);
-                    printf("args :");
-                    if (cmd_list2->args)
-                    {
-                        for (size_t i = 0; cmd_list2->args[i]; i++)
-                        {
-                            printf("[%s]  ", cmd_list2->args[i]);
-                        }
-                    }
-                    printf("\n");
-                    while(redir)
-                    {
-                        printf("filename :[%s]   type:[%d]\n",  redir->filename, redir->type);
-                        redir = redir->next;
-                    }
-                    cmd_list2 = cmd_list2->next;
-                    j++;
-            }
-            exection(cmd_list, &env_list);
-            cmd_list = NULL;
-            tok = NULL;
-		}
+		help_main(line, &env_list);
 	}
     ft_malloc(1, 1);
     rl_clear_history();

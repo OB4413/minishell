@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 23:28:01 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/16 21:21:39 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	remove_env_var(list_env **list, const char *name)
 {
-	list_env	(*list1), (*list2);
+	list_env(*list1), (*list2);
 	list1 = *list;
 	while (list1 && list1->next)
 	{
@@ -32,8 +32,8 @@ static int	remove_env_var(list_env **list, const char *name)
 
 void	ft_unset(char **args, char ***env, list_env **list)
 {
-	int	i;
-	list_env *tmp;
+	int			i;
+	list_env	*tmp;
 
 	(void)env;
 	tmp = *list;
@@ -112,8 +112,8 @@ static int	find_env_var(list_env **list, const char *name,
 // Helper to add/replace an env var
 static void	set_env_var(list_env **list, const char *name_value)
 {
-	list_env (*node);
-	char (*name), (*eq);
+	list_env(*node);
+	char(*name), (*eq);
 	node = ft_malloc((sizeof(list_env)), 0);
 	name = NULL;
 	eq = ft_strchr(name_value, '=');
@@ -159,11 +159,11 @@ char	*ft_strstr(char *str, char *to_find)
 	return (0);
 }
 
-int ft_contains(char *str)
+int	ft_contains(char *str)
 {
-	int i;
-	char (*name), (*eq);
+	int	i;
 
+	char(*name), (*eq);
 	i = 32;
 	name = NULL;
 	eq = ft_strchr(str, '=');
@@ -171,14 +171,16 @@ int ft_contains(char *str)
 		name = ft_strndup(str, eq - str);
 	else
 		name = ft_strdup(str);
-	if(ft_isdigit(str[0]) == 1)
+	if (ft_isdigit(str[0]) == 1)
 		return (-1);
-	while(i < 127)
+	while (i < 127)
 	{
-		if(ft_isalpha(i) == 0 && ft_isdigit(i) == 0 && i != 95)
+		if (ft_isalpha(i) == 0 && ft_isdigit(i) == 0 && i != 95)
 		{
-			if(ft_strchr(name, i) != NULL){
-				return (-1);}
+			if (ft_strchr(name, i) != NULL)
+			{
+				return (-1);
+			}
 		}
 		i++;
 	}
@@ -202,7 +204,7 @@ void	ft_export(char **args, char **env, list_env **list)
 	i = 1;
 	while (args[i])
 	{
-		if(ft_contains(args[i]) == -1 || ft_strcmp(args[i], "=") == 0)
+		if (ft_contains(args[i]) == -1 || ft_strcmp(args[i], "=") == 0)
 		{
 			write(2, " not a valid identifier\n", 25);
 			(*list)->value = ft_strdup("1");

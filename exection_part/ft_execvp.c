@@ -54,8 +54,7 @@ void	change_table(char *new_str, char ***tab)
 {
 	char	**tab2;
 
-
-	int (i), (j);
+	int(i), (j);
 	i = 0;
 	j = -1;
 	while ((*tab)[i])

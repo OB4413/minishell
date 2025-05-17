@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/15 15:00:12 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 14:06:21 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
 		if (WIFEXITED(status)){
 			int exit_code = WEXITSTATUS(status);
 			(*env_list)->value = ft_itoa(exit_code);
+			printf("\n%d\n", exit_code);
 		}
 		if (WIFSIGNALED(status))
         {
@@ -156,22 +157,51 @@ void	ft_cd(char **cmdlist, list_env **env_list)
 	(*env_list)->value = "0";
 }
 
-// void ft_exit(char **args, list_env **list)
-// {
-// 	int i;
+int is_number(char *str)
+{
+	int i;
 
-// 	if (!args[1])
-// 		exit(0);
-// 	if(args[1] && args[2])
-// 	{
-// 		write(2, "exit\ntoo many arguments\n", 25);
-// 		(*list)->value = ft_strdup("1");
-// 		return ;
-// 	}
-// 	i = ft_atoi(args[1]) % 256;
-// 	write(1, "exit\n", 5);
-// 	exit(i);
-// }
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void ft_exit(char **args, list_env **list)
+{
+	int i;
+
+	if (!args[1])
+	{
+		write(2, "exit\n", 5);
+		exit(ft_atoi((*list)->value));
+	}
+	if(args[1] && args[2])
+	{
+		write(2, "exit\ntoo many arguments\n", 25);
+		(*list)->value = ft_strdup("1");
+		return ;
+	}
+	if (is_number(args[1]))
+	{
+		i = ft_atoi(args[1]) % 256;
+		write(1, "exit\n", 5);
+		exit(i);
+	}
+	else
+	{
+		write(2, "exit\n", 5);
+		write(2, "numeric argument required\n", 26);
+		exit(255);
+	}
+	(*list)->value = ft_strdup("2");
+}
 
 void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		char ***env1)
@@ -188,8 +218,8 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 		ft_export(cmd_list->args, *env1, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "unset") == 0)
 		ft_unset(cmd_list->args, env, env_list);
-	// else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
-	// 	ft_exit(cmd_list->args, env_list);
+	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
+		ft_exit(cmd_list->args, env_list);
 	else
 	{
 		shell_luncher(cmd_list, *env, env_list);
