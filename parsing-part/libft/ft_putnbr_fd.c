@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 12:33:05 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/03 15:49:37 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 09:08:38 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	ft_putnbr_fd(int n, int fd)
 {
-	// int	i;
-
-	// i = 0;
 	if (fd < 0)
 		return ;
 	if (n == -2147483648)

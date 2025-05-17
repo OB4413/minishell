@@ -6,15 +6,15 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 13:20:21 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/16 21:21:39 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 14:10:08 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-static int	remove_env_var(list_env **list, const char *name)
+static int	remove_env_var(t_list_env **list, const char *name)
 {
-	list_env(*list1), (*list2);
+	t_list_env	(*list1), (*list2);
 	list1 = *list;
 	while (list1 && list1->next)
 	{
@@ -30,10 +30,10 @@ static int	remove_env_var(list_env **list, const char *name)
 	return (0);
 }
 
-void	ft_unset(char **args, char ***env, list_env **list)
+void	ft_unset(char **args, char ***env, t_list_env **list)
 {
-	int			i;
-	list_env	*tmp;
+	int	i;
+	t_list_env *tmp;
 
 	(void)env;
 	tmp = *list;
@@ -51,7 +51,7 @@ void	ft_unset(char **args, char ***env, list_env **list)
 	}
 }
 
-list_env	*ft_lstlast2(list_env *lst)
+t_list_env	*ft_lstlast2(t_list_env *lst)
 {
 	if (lst == NULL)
 		return (NULL);
@@ -62,9 +62,9 @@ list_env	*ft_lstlast2(list_env *lst)
 	return (lst);
 }
 
-void	ft_lstadd_back2(list_env **lst, list_env *new)
+void	ft_lstadd_back2(t_list_env **lst, t_list_env *new)
 {
-	list_env	*last;
+	t_list_env	*last;
 
 	if (lst == NULL || new == NULL)
 		return ;
@@ -77,10 +77,10 @@ void	ft_lstadd_back2(list_env **lst, list_env *new)
 	last->next = new;
 }
 
-static int	find_env_var(list_env **list, const char *name,
+static int	find_env_var(t_list_env **list, const char *name,
 		const char *name_val)
 {
-	list_env	*list2;
+	t_list_env	*list2;
 	size_t		name_len;
 	char		*new_val;
 
@@ -110,11 +110,11 @@ static int	find_env_var(list_env **list, const char *name,
 }
 
 // Helper to add/replace an env var
-static void	set_env_var(list_env **list, const char *name_value)
+static void	set_env_var(t_list_env **list, const char *name_value)
 {
-	list_env(*node);
-	char(*name), (*eq);
-	node = ft_malloc((sizeof(list_env)), 0);
+	t_list_env (*node);
+	char (*name), (*eq);
+	node = ft_malloc((sizeof(t_list_env)), 0);
 	name = NULL;
 	eq = ft_strchr(name_value, '=');
 	if (eq)
@@ -188,7 +188,7 @@ int	ft_contains(char *str)
 }
 
 // Main export function
-void	ft_export(char **args, char **env, list_env **list)
+void	ft_export(char **args, char **env, t_list_env **list)
 {
 	int	i;
 
@@ -217,10 +217,10 @@ void	ft_export(char **args, char **env, list_env **list)
 	(*list)->value = ft_strdup("0");
 }
 
-int	ft_lstsize2(list_env *lst)
+int	ft_lstsize2(t_list_env *lst)
 {
 	size_t		i;
-	list_env	*ptr;
+	t_list_env	*ptr;
 
 	if (lst == NULL)
 		return (0);
@@ -234,7 +234,7 @@ int	ft_lstsize2(list_env *lst)
 	return (i);
 }
 
-char	**list_to_table(list_env *list)
+char	**list_to_table(t_list_env *list)
 {
 	int		i;
 	char	**env2;
@@ -258,7 +258,7 @@ char	**list_to_table(list_env *list)
 	return (env2);
 }
 
-char	**list_to_table_export(list_env *list)
+char	**list_to_table_export(t_list_env *list)
 {
 	int		i;
 	char	**env2;

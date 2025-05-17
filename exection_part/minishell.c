@@ -6,19 +6,19 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/17 14:06:21 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 14:11:36 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-void	getworkingdir(list_env **list)
+void	getworkingdir(t_list_env **list)
 {
 	printf("%s\n", ft_getenv(list, "PWD")->value);
 	(*list)->value = ft_strdup("0");
 }
 
-void	getenvfunc(char **env, list_env **env_list, char **args)
+void	getenvfunc(char **env, t_list_env **env_list, char **args)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ void	getenvfunc(char **env, list_env **env_list, char **args)
 	(*env_list)->value = "0";
 }
 
-void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
+void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)
 {
 	pid_t	pid;
 	int		status;
@@ -79,7 +79,7 @@ void	shell_luncher(t_command *cmdList, char **env, list_env **env_list)
 	}
 }
 
-void	ft_echo(char **cmdlist, list_env **env_list)
+void	ft_echo(char **cmdlist, t_list_env **env_list)
 {
 	bool	flag;
 	int		i;
@@ -103,9 +103,9 @@ void	ft_echo(char **cmdlist, list_env **env_list)
 	(*env_list)->value = "0";
 }
 
-list_env *ft_getenv(list_env **env_list, char *str)
+t_list_env *ft_getenv(t_list_env **env_list, char *str)
 {
-	list_env *list;
+	t_list_env *list;
 
 	list = *env_list;
 	while(list)
@@ -130,7 +130,7 @@ char *change_dir()
 	}
 	return (cwd);
 }
-void	ft_cd(char **cmdlist, list_env **env_list)
+void	ft_cd(char **cmdlist, t_list_env **env_list)
 {
 	if (!cmdlist[1])
 	{
@@ -173,7 +173,7 @@ int is_number(char *str)
 	return (1);
 }
 
-void ft_exit(char **args, list_env **list)
+void ft_exit(char **args, t_list_env **list)
 {
 	int i;
 
@@ -203,7 +203,7 @@ void ft_exit(char **args, list_env **list)
 	(*list)->value = ft_strdup("2");
 }
 
-void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
+void	execute_cmd(t_command *cmd_list, t_list_env **env_list, char ***env,
 		char ***env1)
 {
 	if (ft_strcmp(cmd_list->args[0], "pwd") == 0)
@@ -226,7 +226,7 @@ void	execute_cmd(t_command *cmd_list, list_env **env_list, char ***env,
 	}
 }
 
-void	exection(t_command *cmd_list, list_env **env_list)
+void	exection(t_command *cmd_list, t_list_env **env_list)
 {
 	char	**env;
 	char	**env1;

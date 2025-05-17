@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 18:55:40 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 13:19:27 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 09:15:51 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int					ft_isdigit(int c);
 int					ft_isalnum(int c);
 int					ft_isascii(int c);
 int					ft_isprint(int c);
-size_t					ft_strlen(const char *s);
+size_t				ft_strlen(const char *s);
 void				*ft_memset(void *b, int c, size_t len);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
