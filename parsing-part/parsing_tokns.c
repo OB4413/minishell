@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 20:22:45 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 11:24:54 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,12 +255,34 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 			}
 			return ;
 		}
+		else if (tok->type == PIPE)
+			*cmd_list = (*cmd_list)->next;
 		tok = tok->next;
 		close(fd);
 	}
 }
 
-void	chek_ambiguous_redirect(t_command **cmd_list, t_list_env *env)
+int	help_chek_ambiguous_redirectin(t_list_env *env, t_redir **redir, int *i)
+{
+	(*redir)->filename = help_expand_variables((*redir)->filename, env);
+	(*redir)->filename = move_quote((*redir)->filename);
+	if ((*redir)->filename && (*redir)->filename[0] != '\'')
+	{
+		while ((*redir)->filename[*i])
+		{
+			if ((*redir)->filename[*i] <= 32)
+			{
+				write(2, "minishell: ambiguous redirect\n", 31);
+					return (1) ;
+			}
+			(*i)++;
+		}
+	}
+	remove_quote(&(*redir)->filename);
+	return (0);
+}
+
+int	check_ambiguous_redirect(t_command **cmd_list, t_list_env *env)
 {
 	t_command	*tmp;
 	t_redir		*redir;
@@ -275,34 +297,21 @@ void	chek_ambiguous_redirect(t_command **cmd_list, t_list_env *env)
 		{
 			if (redir->type == 2 || redir->type == 1)
 			{
-				redir->filename = help_expand_variables(redir->filename, env);
-				redir->filename = move_quote(redir->filename);
-				if (redir->filename && redir->filename[0] != '\'')
-				{
-					while (redir->filename[i])
-					{
-						if (redir->filename[i] <= 32)
-						{
-							printf("minishell: ambiguous redirect\n");
-							break ;
-						}
-						i++;
-					}
-				}
+				if (help_chek_ambiguous_redirectin(env, &redir, &i) == 1)
+					return (1);
 			}
 			redir = redir->next;
 		}
 		tmp = tmp->next;
 	}
+	return (0);
 }
 
-int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
+void	max_heredoc(t_input *tmp)
 {
-	t_input	*tmp;
-	int		i;
+	int i;
 
 	i = 0;
-	tmp = tok;
 	while (tmp)
 	{
 		if (tmp->type == HEREDOC)
@@ -316,6 +325,13 @@ int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
 		rl_clear_history();
 		exit(2);
 	}
+}
+
+int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
+{
+	t_input	*tmp;
+
+	max_heredoc(tok);
 	tmp = tok;
 	if (tmp->type == PIPE)
 	{
@@ -335,6 +351,10 @@ int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
 		tmp = tmp->next;
 	}
 	handler_heredoc(tok, cmd_list, env);
-	chek_ambiguous_redirect(cmd_list, env);
+	if (check_ambiguous_redirect(cmd_list, env) == 1)
+	{
+		env->value = ft_strdup("1");
+		return (1);
+	}
 	return (0);
 }

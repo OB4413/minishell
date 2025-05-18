@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/17 14:09:35 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/18 11:54:09 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
 		char ***env1, char *file)
 {
 	t_command	*cmd2;
-	int			i;
+	// int			i;
 
 	int(fd), (flags), (saved_stdout);
 	saved_stdout = dup(1);
@@ -67,16 +67,16 @@ int	is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
 	if (cmd2->inoutfile && (cmd2->inoutfile->type == 1
 			|| cmd2->inoutfile->type == 2))
 	{
-		i = 0;
-		while ((i <= 32))
-		{
-			if (((i >= 7 && i <= 13) || i == 32))
-			{
-				if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
-					return ((*env_list)->value = "1", 1);
-			}
-			i++;
-		}
+		// i = 0;
+		// while ((i <= 32))
+		// {
+		// 	if (((i >= 7 && i <= 13) || i == 32))
+		// 	{
+		// 		if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
+		// 			return ((*env_list)->value = "1", 1);
+		// 	}
+		// 	i++;
+		// }
 		flags = get_flags(cmd2);
 		if (multiple_out(&cmd2, flags) != 1)
 			return (1);

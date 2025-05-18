@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 19:10:26 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 11:40:13 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,11 @@ char	**help_put_the_args(char **args, t_input **tmp, int *i, int *j)
 			*tmp = (*tmp)->next->next;
 			continue ;
 		}
-		args[*j] = ft_strdup((*tmp)->value);
-		(*j)++;
+		if ((*tmp)->value)
+		{
+			args[*j] = ft_strdup((*tmp)->value);
+			(*j)++;
+		}
 		*tmp = (*tmp)->next;
 	}
 	args[*j] = NULL;
@@ -117,7 +120,8 @@ char	**put_the_args(t_input *tok, char *cmd, char **args, t_input *tmp)
 			tmp2 = tmp2->next->next;
 			continue ;
 		}
-		i++;
+		if (tmp2->value)
+			i++;
 		tmp2 = tmp2->next;
 	}
 	return (help_put_the_args(args, &tmp, &i, &j));
