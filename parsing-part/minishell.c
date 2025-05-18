@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 14:11:46 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 19:10:26 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,6 @@ char	**put_the_args(t_input *tok, char *cmd, char **args, t_input *tmp)
 	i = 0;
 	j = 0;
 	tmp = tok;
-	if (!cmd || !tok->value)
-		return (NULL);
 	while (ft_strcmp(tmp->value, cmd) != 0)
 		tmp = tmp->next;
 	tmp2 = tmp;
