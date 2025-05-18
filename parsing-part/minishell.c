@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 17:20:51 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/18 11:09:17 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,6 @@ char	**put_the_args(t_input *tok, char *cmd, char **args, t_input *tmp)
 	i = 0;
 	j = 0;
 	tmp = tok;
-	if (!cmd || !tok->value)
-		return (NULL);
 	while (ft_strcmp(tmp->value, cmd) != 0)
 		tmp = tmp->next;
 	tmp2 = tmp;
@@ -242,8 +240,6 @@ void	help_main(char *line, t_list_env **invarmant)
 			tok = NULL;
 			return ;
 		}
-		if (!cmd_list->args)
-			printf("fdfgsdg\n");
 		exection(cmd_list, &env_list);
 		cmd_list = NULL;
 		tok = NULL;

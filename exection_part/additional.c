@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   additional.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 05:34:35 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/11 13:28:58 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 19:07:06 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 {
 	size_t	i;
 
+	if (!s1 && !s2)
+		return (0);
 	if (s1 == NULL || s2 == NULL)
 		return (-1);
 	i = 0;

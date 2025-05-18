@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 21:06:30 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/18 11:14:31 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	expand_heredoc(char **str, t_list_env *env)
 	while ((*str)[i])
 	{
 		if ((*str)[i] == '$' && (*str)[i + 1] && (ft_isalnum((*str)[i + 1])
-				|| (*str)[i + 1] == '_'))
+				|| (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
 		{
 			i++;
 			if ((*str)[i] >= 48 && (*str)[i] <= 57)
@@ -43,10 +43,19 @@ void	expand_heredoc(char **str, t_list_env *env)
 				continue ;
 			}
 			start = i;
-			while ((*str)[i] && (ft_isalnum((*str)[i]) || (*str)[i] == '_'))
+			while ((*str)[i] && (ft_isalnum((*str)[i]) || (*str)[i] == '_'
+					|| (*str)[i] == '?'))
+			{
 				i++;
-			tmp = ft_strjoin(tmp, get_value(ft_substr((*str), start, i - start),
-						env));
+				if ((*str)[i - 1] == '?' && start--)
+					break ;
+			}
+			if ((*str)[i - 1] == '?')
+				tmp = ft_strjoin(tmp, get_value(ft_substr((*str), start, i
+								- start), env));
+			else
+				tmp = ft_strjoin(tmp, get_value(ft_substr((*str), start, i
+								- start), env));
 		}
 		else
 		{
@@ -167,7 +176,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 	{
 		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD)
 		{
-			if (fd != -2)
+			if (fd > 0)
 				unlink(tmp);
 			(*cmd_list)->heredoc = random_str();
 			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
