@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/18 11:54:09 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 12:04:50 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,12 @@ int	get_flags(t_command *cmd2)
 	return (flags);
 }
 
-int	multiple_out(t_command **cmd2, int flags)
+int	multiple_out(t_command **cmd2, int flags, t_list_env **env_list)
 {
 	t_command	*cmd;
-	t_redir		*file;
-	t_redir		*last;
 	int			fd;
 
+	t_redir		(*file), (*last);
 	cmd = *cmd2;
 	file = cmd->inoutfile;
 	last = NULL;
@@ -39,15 +38,12 @@ int	multiple_out(t_command **cmd2, int flags)
 		{
 			fd = open(file->filename, flags, 0644);
 			if (fd == -1)
-			{
-				perror("");
-				return (-1);
-			}
+				return ((*env_list)->value = ft_strdup("1"), perror(""), -1);
 			close(fd);
 			last = file;
 		}
 		if (file->next && file->next->type != 1 && file->next->type != 2)
-			return (write(2, "no such file or directory\n", 26), -1);
+			return (perror(""), (*env_list)->value = ft_strdup("1"), -1);
 		file = file->next;
 	}
 	if (last)
@@ -78,7 +74,7 @@ int	is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
 		// 	i++;
 		// }
 		flags = get_flags(cmd2);
-		if (multiple_out(&cmd2, flags) != 1)
+		if (multiple_out(&cmd2, flags, env_list) != 1)
 			return (1);
 		fd = open(cmd2->inoutfile->filename, flags, 0644);
 		if (fd == -1)
@@ -108,7 +104,7 @@ void	heredoc_redirection(struct s_command *cmd, t_list_env **env_list,
 		return ;
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		return (perror("open REDIRECT_IN"));
+		return ((*env_list)->value = ft_strdup("1"), perror(""));
 	dup2(fd, 0);
 	execute_cmd(cmd, env_list, env, env1);
 	close(fd);
@@ -128,7 +124,7 @@ void	in_heredoc_redirs(struct s_command *cmd, t_list_env **env_list,
 	{
 		fd = open(cmd->inoutfile->filename, O_RDONLY);
 		if (fd == -1)
-			return (perror("open REDIRECT_IN"));
+			return ((*env_list)->value = ft_strdup("1"), perror(""));
 		dup2(fd, 0);
 		execute_cmd(cmd, env_list, env, env1);
 		close(fd);
@@ -162,11 +158,11 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 		if (cmd_list->next)
 		{
 			if (pipe(pipe_fd) == -1)
-				return (perror("pipe"));
+				return ((*env_list)->value = ft_strdup("1"), perror("pipe"));
 		}
 		pid = fork();
 		if (pid == -1)
-			return (perror("fork"));
+			return ((*env_list)->value = ft_strdup("1"), perror("fork"));
 		if (pid == 0)
 		{
 			if (prev_fd != -1)
@@ -183,7 +179,7 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 			if (is_redirection(cmd_list, env_list, env, env1, file) == 1)
 				exit(1);
 			execute_cmd(cmd_list, env_list, env, env1);
-			exit(0);
+				exit(ft_atoi((*env_list)->value));
 		}
 		else
 		{
@@ -197,6 +193,12 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 			cmd_list = cmd_list->next;
 		}
 	}
+	// waitpid(pid, &status, 0);
+	// if (WIFEXITED(status))
+	// {
+	// 	(*env_list)->value = ft_itoa(WEXITSTATUS(status));
+	// 	// printf("\n%s\n", (*env_list)->value);  // Update exit status
+	// }
 	while (waitpid(0, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
