@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/17 14:11:36 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 20:58:00 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)
 		signal(SIGQUIT, SIG_DFL);
 		if (execve_like_execvp(cmdList->args[0], cmdList->args, env) == -1)
 			write(2, "command not found\n", 19);
+		(*env_list)->value = ft_strdup("127");
 		exit(127);
 	}
 	else if (pid < 0)
@@ -64,16 +65,17 @@ void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)
 		if (WIFEXITED(status)){
 			int exit_code = WEXITSTATUS(status);
 			(*env_list)->value = ft_itoa(exit_code);
-			printf("\n%d\n", exit_code);
+			// printf("\n%d\n", exit_code);
 		}
 		if (WIFSIGNALED(status))
         {
             int sig = WTERMSIG(status);
             if (sig == SIGINT)
 				write(1, "\n", 1);
-			else if (sig == SIGQUIT)
+			else if (sig == SIGQUIT){
 				write(2, "Quit (core dumped)\n", 20);
-			(*env_list)->value = ft_itoa(128 + sig);
+				(*env_list)->value = ft_itoa(128 + sig);
+			}
         }
 		signal(SIGINT, sigint_handler);
 	}
@@ -116,7 +118,7 @@ t_list_env *ft_getenv(t_list_env **env_list, char *str)
 	}
 	return (NULL);
 }
-char *change_dir()
+char *change_dir(t_list_env **env_list)
 {
 	char *cwd = malloc(1024);
 	if (!cwd)
@@ -124,6 +126,7 @@ char *change_dir()
 
 	if (getcwd(cwd, 1024) == NULL)
 	{
+		(*env_list)->value = ft_strdup("1");
 		perror("getcwd() error");
 		free(cwd);
 		return (NULL);
@@ -153,7 +156,7 @@ void	ft_cd(char **cmdlist, t_list_env **env_list)
 	}
 	ft_getenv(env_list, "OLDPWD")->value = ft_strdup(
 	ft_getenv(env_list, "PWD")->value);
-	ft_getenv(env_list, "PWD")->value = ft_strdup(change_dir());
+	ft_getenv(env_list, "PWD")->value = ft_strdup(change_dir(env_list));
 	(*env_list)->value = "0";
 }
 
@@ -198,7 +201,7 @@ void ft_exit(char **args, t_list_env **list)
 	{
 		write(2, "exit\n", 5);
 		write(2, "numeric argument required\n", 26);
-		exit(255);
+		exit(2);
 	}
 	(*list)->value = ft_strdup("2");
 }

@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/14 19:01:41 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:06:14 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	execve_like_execvp(const char *file, char **argv, char **env)
 		return (-1);
 	}
 	full_path = search_path(file);
-	change_table(full_path, &argv);
+	// change_table(full_path, &argv);
 	if (ft_strchr(file, '/'))
 		return (execve(full_path, argv, env));
 	if (!full_path)

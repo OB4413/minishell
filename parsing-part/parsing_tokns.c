@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_tokns.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 13:25:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/17 21:06:30 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (fd == -1)
 			{
+				env->value = ft_strdup("1");
 				write(2, "minishell: i can not open the file\n", 36);
 				return ;
 			}
@@ -241,6 +242,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 		{
 			if (!tok->next)
 			{
+				env->value = ft_strdup("1");
 				write(2, "minishell: syntax error near ", 30);
 				write(2, "unexpected token `newline'\n", 28);
 			}
