@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 12:04:58 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 15:49:53 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)
 	if (pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		if (execve_like_execvp(cmdList->args[0], cmdList->args, env) == -1)
+		if (execve_like_execvp(cmdList->args[0], cmdList->args, env, env_list) == -1)
 			write(2, "command not found\n", 19);
 		(*env_list)->value = ft_strdup("127");
 		exit(127);

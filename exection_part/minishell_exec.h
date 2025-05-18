@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/17 11:12:59 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 15:50:56 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*ft_strndup(const char *s, size_t n);
 void	ft_unset(char **args, char ***env, t_list_env **list);
 void	ft_export(char **args, char **env, t_list_env **list);
 char	*ft_strjoin(char const *s1, char const *s2);
-int		execve_like_execvp(const char *file, char **argv, char **env);
+int		execve_like_execvp(const char *file, char **argv, char **env, t_list_env **list_env);
 void	exection(struct s_command *cmd_list, struct s_list_env **env_list);
 char	**list_to_table(t_list_env *list);
 char	*ft_strstr(char *str, char *to_find);

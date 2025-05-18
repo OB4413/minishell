@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/18 12:04:50 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 15:09:53 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,18 +193,9 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 			cmd_list = cmd_list->next;
 		}
 	}
-	// waitpid(pid, &status, 0);
-	// if (WIFEXITED(status))
-	// {
-	// 	(*env_list)->value = ft_itoa(WEXITSTATUS(status));
-	// 	// printf("\n%s\n", (*env_list)->value);  // Update exit status
-	// }
 	while (waitpid(0, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
-		{
 			(*env_list)->value = ft_itoa(WEXITSTATUS(status));
-			// printf("\n%s\n", (*env_list)->value);  // Update exit status
-		}
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execvp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/17 17:06:14 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/18 16:16:58 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,21 +69,24 @@ void	change_table(char *new_str, char ***tab)
 	*tab = tab2;
 }
 
-int	execve_like_execvp(const char *file, char **argv, char **env)
+int	execve_like_execvp(const char *file, char **argv, char **env, t_list_env **env_list)
 {
 	char	*full_path;
 	char	*path;
 	int		result;
+	t_list_env *env1;
 
-	path = getenv("PATH");
-	full_path = NULL;
-	if (!path)
+	env1 = ft_getenv(env_list, "PATH");
+	if (env1 == NULL)
 	{
-		errno = ENOENT;
-		return (-1);
+		write(2, "No such file or directory\n", 27);
+		(*env_list)->value = ft_strdup("127");
+		return (-2);
 	}
+	path = env1->value;
+	printf("%s\n", env1->value);
+	full_path = NULL;
 	full_path = search_path(file);
-	// change_table(full_path, &argv);
 	if (ft_strchr(file, '/'))
 		return (execve(full_path, argv, env));
 	if (!full_path)

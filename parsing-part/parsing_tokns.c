@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/18 12:05:14 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 15:44:10 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,10 +154,12 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 	int			b;
 	pid_t		pid;
 	int			sig;
+	t_command *hh;
 
 	b = 0;
 	fd = -2;
 	temp = tok;
+	hh = *cmd_list;
 	while (temp)
 	{
 		if (temp->next && temp->type == HEREDOC && temp->next->type == WORD)
@@ -177,9 +179,9 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD)
 		{
 			if (fd > 0)
-				unlink(tmp);
-			(*cmd_list)->heredoc = random_str();
-			fd = open((*cmd_list)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
+				unlink(hh->heredoc);
+			hh->heredoc = random_str();
+			fd = open(hh->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
 			if (fd == -1)
 			{
 				env->value = ft_strdup("1");
@@ -191,7 +193,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 			{
 				if (tmp[ft_strlen(tmp) - 1] != tmp[0])
 				{
-					(*cmd_list)->heredoc = ft_strdup("ctrlC");
+					hh->heredoc = ft_strdup("ctrlC");
 					write(2, "minishell: unexpected EOF while looking for", 44);
 					write(2, " matching \"\'\n", 14);
 					write(2, "minishell:syntax error:unexpected end of file\n",
@@ -208,7 +210,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 				if (tmp[0] != '"' && tmp[0] != '\'' && str)
 				{
 					b = 2;
-					expand_heredoc(&str, env);
+					if (ft_strcmp(str, tmp) != 0)
+						expand_heredoc(&str, env);
 				}
 				tmp = tok->next->value;
 				remove_quote(&tmp);
@@ -239,7 +242,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 					sig = WTERMSIG(status);
 					if (sig == SIGINT)
 					{
-						(*cmd_list)->heredoc = ft_strdup("ctrlC");
+						hh->heredoc = ft_strdup("ctrlC");
+						env->value = ft_strdup(ft_itoa(sig));
 						printf("\n");
 						break ;
 					}
@@ -257,8 +261,8 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 			}
 			return ;
 		}
-		else if (tok->type == PIPE)
-			*cmd_list = (*cmd_list)->next;
+		if (tok->type == PIPE)
+			hh = hh->next;
 		tok = tok->next;
 		close(fd);
 	}
