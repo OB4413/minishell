@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:27 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/17 20:09:29 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/19 19:19:42 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ typedef struct s_command
 }						t_command;
 
 void					tokenization(char *line, t_input **tok);
-void					expand_variables(t_input **tok, t_list_env *env);
+void					expand_variables(t_input **tok, t_list_env *env, int i, int start);
 int						parsing_tokns(t_input *tok, t_command **cmd_list,
 							t_list_env *env);
 void					exection(struct s_command *cmd_list,
@@ -76,7 +76,7 @@ void					sigint_handler(int signal);
 char					*get_value(char *str, t_list_env *env);
 char					*ft_strjoin_c(char *s1, char c);
 void					*ft_malloc(size_t size, int type);
-char					*help_expand_variables(char *str, t_list_env *env);
+char					*help_expand_variables(char *str, t_list_env *env, int i);
 char					*get_next_line(int fd);
 
 #endif

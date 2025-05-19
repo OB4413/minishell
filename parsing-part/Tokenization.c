@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/16 20:09:37 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/19 17:49:24 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,18 @@ void	help_count_word(char *line, int *k, int *i, char *d)
 	}
 }
 
+void	skip_wait_space(char *line, int *i)
+{
+	*i = 0;
+	while (line[*i] <= 32 && line[*i] != '\0')
+		(*i)++;
+}
+
 int	ft_count_word(char *line, int j, int k, char d)
 {
 	int	i;
 
-	i = 0;
-	while (line[i] <= 32 && line[i] != '\0')
-		i++;
+	skip_wait_space(line, &i);
 	while (line[i] != '\0')
 	{
 		if ((line[i] == '"' || line[i] == '\'') && k == 0)

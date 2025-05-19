@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/18 15:44:10 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/19 19:19:30 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,30 @@ char	*random_str(void)
 	return (str);
 }
 
-void	expand_heredoc(char **str, t_list_env *env)
+int	help_expand_heredoc(char **str, int *i, int *start)
+{
+	(*i)++;
+	if ((*str)[*i] >= 48 && (*str)[*i] <= 57)
+	{
+		(*i)++;
+		return (1);
+	}
+	*start = *i;
+	while ((*str)[*i] && (ft_isalnum((*str)[*i]) || (*str)[*i] == '_'
+			|| (*str)[*i] == '?'))
+	{
+		(*i)++;
+		if ((*str)[*i - 1] == '?' && (*start)--)
+			break ;
+	}
+	return (0);
+}
+
+void	expand_heredoc(char **str, t_list_env *env, int i)
 {
 	char	*tmp;
-	int		i;
 	int		start;
 
-	i = 0;
 	start = 0;
 	tmp = NULL;
 	while ((*str)[i])
@@ -36,20 +53,8 @@ void	expand_heredoc(char **str, t_list_env *env)
 		if ((*str)[i] == '$' && (*str)[i + 1] && (ft_isalnum((*str)[i + 1])
 				|| (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
 		{
-			i++;
-			if ((*str)[i] >= 48 && (*str)[i] <= 57)
-			{
-				i++;
+			if (help_expand_heredoc(str, &i, &start) == 1)
 				continue ;
-			}
-			start = i;
-			while ((*str)[i] && (ft_isalnum((*str)[i]) || (*str)[i] == '_'
-					|| (*str)[i] == '?'))
-			{
-				i++;
-				if ((*str)[i - 1] == '?' && start--)
-					break ;
-			}
 			if ((*str)[i - 1] == '?')
 				tmp = ft_strjoin(tmp, get_value(ft_substr((*str), start, i
 								- start), env));
@@ -58,23 +63,64 @@ void	expand_heredoc(char **str, t_list_env *env)
 								- start), env));
 		}
 		else
-		{
-			tmp = ft_strjoin_c(tmp, (*str)[i]);
-			i++;
-		}
+			tmp = ft_strjoin_c(tmp, (*str)[i++]);
 	}
+	*str = "\0";
 	if (tmp)
 		*str = tmp;
 }
 
-char	*move_quote(char *str)
+void	help_move_quote(char **str, int *j, char **tmp)
 {
-	char	*tmp;
+	(*j)++;
+	while ((*str)[*j] && (*str)[*j] != (*tmp)[0])
+	{
+		*tmp = ft_strjoin_c(*tmp, (*str)[*j]);
+		(*j)++;
+	}
+	if ((*str)[*j] == (*tmp)[0])
+	{
+		(*j)++;
+		while ((*str)[*j])
+		{
+			*tmp = ft_strjoin_c(*tmp, (*str)[*j]);
+			(*j)++;
+		}
+		*tmp = ft_strjoin_c(*tmp, (*tmp)[0]);
+	}
+}
+
+char	*check_qout_closed(char *str)
+{
 	int		i;
-	int		j;
+	char	q;
 
 	i = 0;
-	j = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
+			q = str[i];
+			i++;
+			while (str[i] && str[i] != q)
+				i++;
+			if (!str[i])
+			{
+				write(2, "minishell: unexpected EOF while looking for", 44);
+				write(2, " matching \"\'\n", 14);
+				write(2, "minishell:syntax error:unexpected end of file\n", 47);
+				return (NULL);
+			}
+		}
+		i++;
+	}
+	return (str);
+}
+
+char	*move_quote(char *str, int i, int j)
+{
+	char	*tmp;
+
 	tmp = NULL;
 	while (str && str[i])
 	{
@@ -88,22 +134,7 @@ char	*move_quote(char *str)
 			}
 			if (str[j] == tmp[0])
 			{
-				j++;
-				while (str[j] && str[j] != tmp[0])
-				{
-					tmp = ft_strjoin_c(tmp, str[j]);
-					j++;
-				}
-				if (str[j] == tmp[0])
-				{
-					j++;
-					while (str[j])
-					{
-						tmp = ft_strjoin_c(tmp, str[j]);
-						j++;
-					}
-					tmp = ft_strjoin_c(tmp, tmp[0]);
-				}
+				help_move_quote(&str, &j, &tmp);
 				return (tmp);
 			}
 		}
@@ -112,13 +143,11 @@ char	*move_quote(char *str)
 	return (str);
 }
 
-void	remove_quote(char **str)
+void	remove_quote(char **str, int i)
 {
 	char	*tmp;
-	int		i;
 	char	qoute;
 
-	i = 0;
 	tmp = NULL;
 	while (*str && (*str)[i])
 	{
@@ -143,23 +172,10 @@ void	remove_quote(char **str)
 	*str = tmp;
 }
 
-void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
+void	help_handel_heredoc(t_input *temp, t_list_env *env, t_command **hh,
+		t_command **cmd_list)
 {
-	int			fd;
-	char		*str;
-	char		*tmp;
-	t_input		*temp;
-	static int	j = 0;
-	int			status;
-	int			b;
-	pid_t		pid;
-	int			sig;
-	t_command *hh;
-
-	b = 0;
-	fd = -2;
-	temp = tok;
-	hh = *cmd_list;
+	*hh = *cmd_list;
 	while (temp)
 	{
 		if (temp->next && temp->type == HEREDOC && temp->next->type == WORD)
@@ -167,111 +183,156 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env)
 		else if (temp->next && temp->type == HEREDOC
 			&& temp->next->type != WORD)
 		{
-			printf("%s\n",
-				"minishell: syntax error near unexpected token `<<'");
+			env->value = ft_strdup("2");
+			write(2, "minishell: syntax error near unexpected token `<<'\n",
+				52);
 			break ;
 		}
 		else
 			temp = temp->next;
 	}
+}
+
+int	help_handel_heredoc1(pid_t pid, int status, t_list_env *env, t_command **hh)
+{
+	signal(SIGINT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, sigint_handler);
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+		{
+			(*hh)->heredoc = ft_strdup("ctrlC");
+			env->value = ft_strdup("130");
+			printf("\n");
+			return (1);
+		}
+	}
+	return (0);
+}
+
+int	help_handel_heredoc2(t_input *tok, t_command **hh, t_list_env *env, int fd)
+{
+	if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC
+			&& tok->next->type != WORD))
+	{
+		if (!tok->next)
+		{
+			(*hh)->heredoc = ft_strdup("ctrlC");
+			env->value = ft_strdup("2");
+			write(2, "minishell: syntax error near ", 30);
+			write(2, "unexpected token `newline'\n", 28);
+		}
+		return (1);
+	}
+	if (tok->type == PIPE)
+		*hh = (*hh)->next;
+	close(fd);
+	return (0);
+}
+
+int	help_handel_heredoc3(int *fd, t_command **hh, t_list_env *env, char *str)
+{
+	str = ft_strdup(str);
+	if (*fd > 0)
+		unlink((*hh)->heredoc);
+	(*hh)->heredoc = random_str();
+	*fd = open((*hh)->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (*fd == -1)
+	{
+		env->value = ft_strdup("2");
+		write(2, "minishell: i can not open the file\n", 36);
+		return (1);
+	}
+	if (!check_qout_closed(str))
+	{
+		(*hh)->heredoc = ft_strdup("ctrlC");
+		env->value = ft_strdup("2");
+		return (1);
+	}
+	return (0);
+}
+
+int	help_run_children(char **tmp, t_list_env *env, char **str, t_input *tok)
+{
+	int	b;
+
+	b = 0;
+	*str = readline("> ");
+	if ((*tmp)[0] != '"' && (*tmp)[0] != '\'' && str)
+	{
+		b = 2;
+		if (ft_strcmp(*str, *tmp) != 0)
+			expand_heredoc(str, env, 0);
+	}
+	*tmp = tok->next->value;
+	remove_quote(tmp, 0);
+	return (b);
+}
+
+void	run_children(char **tmp, t_list_env *env, t_input *tok, int fd)
+{
+	static int	j = 0;
+	int			b;
+	char		*str;
+
+	b = 0;
+	j++;
+	b = help_run_children(tmp, env, &str, tok);
+	while (str && ft_strcmp(str, (*tmp)) != 0)
+	{
+		write(fd, str, strlen(str));
+		write(fd, "\n", 1);
+		j++;
+		str = readline("> ");
+		if (b == 2 && str)
+		{
+			if (ft_strcmp(str, (*tmp)) != 0)
+				expand_heredoc(&str, env, 0);
+		}
+	}
+	if (!str)
+	{
+		printf("minishell: warning: here-document at line ");
+		printf("%d delimited by end-of-file (wanted `%s')\n", j, *tmp);
+	}
+	exit(0);
+}
+
+void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env,
+		int fd)
+{
+	char		*tmp;
+	pid_t		pid;
+	t_command	*hh;
+
+	help_handel_heredoc(tok, env, &hh, cmd_list);
 	while (tok)
 	{
 		if (tok->next && tok->type == HEREDOC && tok->next->type == WORD)
 		{
-			if (fd > 0)
-				unlink(hh->heredoc);
-			hh->heredoc = random_str();
-			fd = open(hh->heredoc, O_CREAT | O_RDWR | O_TRUNC, 0644);
-			if (fd == -1)
-			{
-				env->value = ft_strdup("1");
-				write(2, "minishell: i can not open the file\n", 36);
+			if (help_handel_heredoc3(&fd, &hh, env, tok->next->value) == 1)
 				return ;
-			}
-			tmp = move_quote(ft_strdup(tok->next->value));
-			if (tmp[0] == '"' || tmp[0] == '\'')
-			{
-				if (tmp[ft_strlen(tmp) - 1] != tmp[0])
-				{
-					hh->heredoc = ft_strdup("ctrlC");
-					write(2, "minishell: unexpected EOF while looking for", 44);
-					write(2, " matching \"\'\n", 14);
-					write(2, "minishell:syntax error:unexpected end of file\n",
-						49);
-					break ;
-				}
-			}
+			tmp = move_quote(ft_strdup(tok->next->value), 0, 0);
 			pid = fork();
 			if (pid == 0)
 			{
 				signal(SIGINT, SIG_DFL);
-				j++;
-				str = readline("> ");
-				if (tmp[0] != '"' && tmp[0] != '\'' && str)
-				{
-					b = 2;
-					if (ft_strcmp(str, tmp) != 0)
-						expand_heredoc(&str, env);
-				}
-				tmp = tok->next->value;
-				remove_quote(&tmp);
-				while (str && ft_strcmp(str, tmp) != 0)
-				{
-					write(fd, str, strlen(str));
-					write(fd, "\n", 1);
-					j++;
-					str = readline("> ");
-					if (b == 2 && str)
-						expand_heredoc(&str, env);
-				}
-				if (!str)
-				{
-					printf("minishell: warning: here-document at line");
-					printf("%d delimited by end-of-file (wanted `%s')\n", j,
-						tmp);
-				}
-				exit(0);
+				run_children(&tmp, env, tok, fd);
 			}
-			else
-			{
-				signal(SIGINT, SIG_IGN);
-				waitpid(pid, &status, 0);
-				signal(SIGINT, sigint_handler);
-				if (WIFSIGNALED(status))
-				{
-					sig = WTERMSIG(status);
-					if (sig == SIGINT)
-					{
-						hh->heredoc = ft_strdup("ctrlC");
-						env->value = ft_strdup(ft_itoa(sig));
-						printf("\n");
-						break ;
-					}
-				}
-			}
+			if (help_handel_heredoc1(pid, 0, env, &hh) == 1)
+				break ;
 		}
-		else if ((tok->type == HEREDOC && !tok->next) || (tok->type == HEREDOC
-				&& tok->next->type != WORD))
-		{
-			if (!tok->next)
-			{
-				env->value = ft_strdup("1");
-				write(2, "minishell: syntax error near ", 30);
-				write(2, "unexpected token `newline'\n", 28);
-			}
+		else if (help_handel_heredoc2(tok, &hh, env, fd) == 1)
 			return ;
-		}
-		if (tok->type == PIPE)
-			hh = hh->next;
 		tok = tok->next;
-		close(fd);
 	}
 }
 
 int	help_chek_ambiguous_redirectin(t_list_env *env, t_redir **redir, int *i)
 {
-	(*redir)->filename = help_expand_variables((*redir)->filename, env);
-	(*redir)->filename = move_quote((*redir)->filename);
+	(*redir)->filename = help_expand_variables((*redir)->filename, env, 0);
+	(*redir)->filename = move_quote((*redir)->filename, 0, 0);
 	if ((*redir)->filename && (*redir)->filename[0] != '\'')
 	{
 		while ((*redir)->filename[*i])
@@ -279,12 +340,12 @@ int	help_chek_ambiguous_redirectin(t_list_env *env, t_redir **redir, int *i)
 			if ((*redir)->filename[*i] <= 32)
 			{
 				write(2, "minishell: ambiguous redirect\n", 31);
-					return (1) ;
+				return (1);
 			}
 			(*i)++;
 		}
 	}
-	remove_quote(&(*redir)->filename);
+	remove_quote(&(*redir)->filename, 0);
 	return (0);
 }
 
@@ -315,7 +376,7 @@ int	check_ambiguous_redirect(t_command **cmd_list, t_list_env *env)
 
 void	max_heredoc(t_input *tmp)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (tmp)
@@ -336,27 +397,24 @@ void	max_heredoc(t_input *tmp)
 int	parsing_tokns(t_input *tok, t_command **cmd_list, t_list_env *env)
 {
 	t_input	*tmp;
+	int		i;
 
+	i = 0;
 	max_heredoc(tok);
 	tmp = tok;
-	if (tmp->type == PIPE)
-	{
-		write(2, "minishell: syntax error near unexpected token `|'\n", 50);
-		env->value = ft_strdup("2");
-		return (1);
-	}
-	tmp = tmp->next;
 	while (tmp)
 	{
-		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE))
+		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE
+				|| i == 0))
 		{
 			write(2, "minishell: syntax error near unexpected token `|'\n", 50);
 			env->value = ft_strdup("2");
 			return (1);
 		}
 		tmp = tmp->next;
+		i = 2;
 	}
-	handler_heredoc(tok, cmd_list, env);
+	handler_heredoc(tok, cmd_list, env, -2);
 	if (check_ambiguous_redirect(cmd_list, env) == 1)
 	{
 		env->value = ft_strdup("1");

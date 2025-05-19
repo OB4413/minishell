@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/18 13:38:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/19 18:35:34 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,19 +236,13 @@ void	help_main(char *line, t_list_env **invarmant)
 	{
 		add_history(line);
 		tokenization(line, &tok);
-		expand_variables(&tok, env_list);
+		expand_variables(&tok, env_list, 0, 0);
 		list_commands(tok, &cmd_list);
 		if (parsing_tokns(tok, &cmd_list, env_list) == 1)
 		{
 			cmd_list = NULL;
 			tok = NULL;
 			return ;
-		}
-		t_command *hh = cmd_list;
-		while (hh)
-		{
-			printf("[%s]\n", cmd_list->heredoc);
-			hh = hh->next;
 		}
 		exection(cmd_list, &env_list);
 		cmd_list = NULL;

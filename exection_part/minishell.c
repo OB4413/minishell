@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 15:49:53 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 16:25:31 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,10 +223,8 @@ void	execute_cmd(t_command *cmd_list, t_list_env **env_list, char ***env,
 		ft_unset(cmd_list->args, env, env_list);
 	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
 		ft_exit(cmd_list->args, env_list);
-	else
-	{
+	else if (cmd_list->args[0])
 		shell_luncher(cmd_list, *env, env_list);
-	}
 }
 
 void	exection(t_command *cmd_list, t_list_env **env_list)

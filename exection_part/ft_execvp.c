@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 16:16:58 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/18 16:21:21 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ int	execve_like_execvp(const char *file, char **argv, char **env, t_list_env **e
 		return (-2);
 	}
 	path = env1->value;
-	printf("%s\n", env1->value);
 	full_path = NULL;
 	full_path = search_path(file);
 	if (ft_strchr(file, '/'))
