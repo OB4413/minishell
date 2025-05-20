@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/20 14:20:31 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/20 18:48:15 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,9 +224,7 @@ void	execute_cmd(t_command *cmd_list, t_list_env **env_list, char ***env,
 	else if (ft_strcmp(cmd_list->args[0], "exit") == 0)
 		ft_exit(cmd_list->args, env_list);
 	else if (cmd_list->args[0])
-	{
 		shell_luncher(cmd_list, *env, env_list);
-	}
 }
 
 void	exection(t_command *cmd_list, t_list_env **env_list)
@@ -234,6 +232,8 @@ void	exection(t_command *cmd_list, t_list_env **env_list)
 	char	**env;
 	char	**env1;
 
+	if (!cmd_list)
+		return ;
 	env = list_to_table(*env_list);
 	env1 = list_to_table_export(*env_list);
 	execute_piped_commands(cmd_list, env_list, &env, &env1);

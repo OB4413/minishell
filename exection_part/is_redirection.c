@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/20 15:18:03 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:23:11 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,15 @@ int	get_flags(int type)
 	return (flags);
 }
 
-int	multiple_out(t_command **cmd2, int flags, t_list_env **env_list)
+int	multiple_out(t_command **cmd2, int flags, t_list_env **env_list, char ***env,
+	char ***env1, char *file2)
 {
 	t_command	*cmd;
 	int			fd;
 
+	(void)env;
+	(void)env1;
+	(void)file2;
 	t_redir		(*file), (*last);
 	cmd = *cmd2;
 	file = cmd->inoutfile;
@@ -204,7 +208,7 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 		if (cmd_list->next)
 		{
 			if (pipe(pipe_fd) == -1)
-				return ((*env_list)->value = ft_strdup("1"), perror("pipe"));
+			return ((*env_list)->value = ft_strdup("1"), perror("pipe"));
 		}
 		tab[i] = fork();
 		if (tab[i] == -1)
