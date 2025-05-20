@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execvp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 16:21:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 15:44:44 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,9 @@ int	execve_like_execvp(const char *file, char **argv, char **env, t_list_env **e
 	}
 	path = env1->value;
 	full_path = NULL;
-	full_path = search_path(file);
 	if (ft_strchr(file, '/'))
-		return (execve(full_path, argv, env));
+		return (execve(file, argv, env));
+	full_path = search_path(file);
 	if (!full_path)
 	{
 		errno = ENOENT;

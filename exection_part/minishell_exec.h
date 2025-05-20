@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 15:50:56 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 15:08:43 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,8 @@ int		execve_like_execvp(const char *file, char **argv, char **env, t_list_env **
 void	exection(struct s_command *cmd_list, struct s_list_env **env_list);
 char	**list_to_table(t_list_env *list);
 char	*ft_strstr(char *str, char *to_find);
-int		is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
-			char ***env1, char *file);
-void	heredoc_redirection(struct s_command *cmd, t_list_env **env_list,
-			char ***env, char ***env1, char *file);
+int		is_redirection(t_redir *redir,  t_list_env **env_list, char *file);
+int	heredoc_redirection(t_redir *redir, char *file, t_list_env **env_list);
 void	in_heredoc_redirs(struct s_command *cmd, t_list_env **env_list,
 			char ***env, char ***env1, char *file);
 void	execute_cmd(t_command *cmd_list, t_list_env **env_list, char ***env,

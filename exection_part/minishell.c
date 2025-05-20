@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/18 16:25:31 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 18:48:15 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,8 @@ void	exection(t_command *cmd_list, t_list_env **env_list)
 	char	**env;
 	char	**env1;
 
+	if (!cmd_list)
+		return ;
 	env = list_to_table(*env_list);
 	env1 = list_to_table_export(*env_list);
 	execute_piped_commands(cmd_list, env_list, &env, &env1);
