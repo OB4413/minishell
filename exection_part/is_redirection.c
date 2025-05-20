@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/18 15:09:53 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 15:18:03 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
 
-int	get_flags(t_command *cmd2)
+int	get_flags(int type)
 {
 	int	flags;
 
-	if (cmd2->inoutfile->type == 1)
+	if (type == 1)
 		flags = O_WRONLY | O_CREAT | O_TRUNC;
 	else
 		flags = O_WRONLY | O_CREAT | O_APPEND;
@@ -51,119 +51,165 @@ int	multiple_out(t_command **cmd2, int flags, t_list_env **env_list)
 	return (1);
 }
 
-int	is_redirection(t_command *cmd, t_list_env **env_list, char ***env,
+int before_redir(t_command *cmd, t_list_env **env_list, char ***env,
 		char ***env1, char *file)
 {
-	t_command	*cmd2;
-	// int			i;
+	int (saved_stdout), (saved_stdin);
 
-	int(fd), (flags), (saved_stdout);
-	saved_stdout = dup(1);
-	cmd2 = cmd;
-	if (cmd2->inoutfile && (cmd2->inoutfile->type == 1
-			|| cmd2->inoutfile->type == 2))
-	{
-		// i = 0;
-		// while ((i <= 32))
-		// {
-		// 	if (((i >= 7 && i <= 13) || i == 32))
-		// 	{
-		// 		if (ft_strchr(cmd2->inoutfile->filename, i) != NULL)
-		// 			return ((*env_list)->value = "1", 1);
-		// 	}
-		// 	i++;
-		// }
-		flags = get_flags(cmd2);
-		if (multiple_out(&cmd2, flags, env_list) != 1)
-			return (1);
-		fd = open(cmd2->inoutfile->filename, flags, 0644);
-		if (fd == -1)
-			return (perror("fd error :"), (*env_list)->value = "1", 1);
-		if (dup2(fd, 1) == -1)
-			return (perror("dup2 failed"), (*env_list)->value = "1", close(fd),
-				1);
-		close(fd);
+	saved_stdout = dup(STDOUT_FILENO);
+	saved_stdin = dup(STDIN_FILENO);
+	if (is_redirection(cmd->inoutfile, env_list, file) >= 0)
 		execute_cmd(cmd, env_list, env, env1);
-		dup2(saved_stdout, 1);
+	if (saved_stdout != -1)
+	{
+		dup2(saved_stdout, STDOUT_FILENO);
 		close(saved_stdout);
-		return (1);
 	}
-	else if (cmd2->inoutfile && (cmd2->inoutfile->type == 0
-			|| cmd2->inoutfile->type == 3))
-		return (in_heredoc_redirs(cmd, env_list, env, env1, file), 1);
-	else
-		return (0);
+	if (saved_stdin != -1)
+	{
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdin);
+	}
+	return 1;
 }
 
-void	heredoc_redirection(struct s_command *cmd, t_list_env **env_list,
-		char ***env, char ***env1, char *file)
+int	handle_output_redirection(t_redir *redir, t_list_env **env)
 {
-	int(fd), (saved_stdout);
-	saved_stdout = dup(0);
-	if (ft_strcmp(cmd->heredoc, "ctrlC") == 0)
-		return ;
+	int (flags), (fd);
+	flags = get_flags(redir->type);
+	fd = open(redir->filename, flags, 0644);
+	if (fd == -1)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(redir->filename, 2);
+		ft_putstr_fd(": Permission denied\n", 2);
+		(*env)->value = ft_strdup("126");
+		return (-1);
+	}
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		ft_putstr_fd("minishell: dup2 failed\n", 2);
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+int	handle_input_redirection(t_redir *redir, t_list_env **env)
+{
+	int fd;
+
+	fd = open(redir->filename, O_RDONLY);
+	if (fd == -1)
+	{
+		(*env)->value = ft_strdup("1");
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(redir->filename, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd("\n", 2);
+		return (-1);
+	}
+	if (dup2(fd, STDIN_FILENO) == -1)
+		return (ft_putstr_fd("minishell: dup2 failed\n", 2), (*env)->value = ft_strdup("1"), close(fd), -1);
+	close(fd);
+	return (0);
+}
+
+int	is_redirection(t_redir *redir, t_list_env **env_list, char *file)
+{
+	t_redir *redirection;
+
+	redirection = redir;
+	while (redirection)
+	{
+		if (redirection->type == 1 || redirection->type == 2) // > or >>
+		{
+			if (handle_output_redirection(redirection, env_list) < 0)
+			return (-1);
+		}
+		else if (redirection->type == 0) // <
+		{
+			if (handle_input_redirection(redirection, env_list) < 0)
+			return (-1);
+		}
+		else if (redirection->type == 3) // <<
+		{
+			if (heredoc_redirection(redir, file, env_list) == -1)
+				return (-1); // Only sets stdin
+		}
+		redirection = redirection->next;
+	}
+	return 0;
+}
+
+int	heredoc_redirection(t_redir *redir, char *file, t_list_env **env_list)
+{
+	int fd;
+	if (!file || ft_strcmp(file, "ctrlC") == 0)
+		return 0;
+
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		return ((*env_list)->value = ft_strdup("1"), perror(""));
-	dup2(fd, 0);
-	execute_cmd(cmd, env_list, env, env1);
+		return (perror("heredoc open"), (*env_list)->value = ft_strdup("1"), -1);
+	if (dup2(fd, STDIN_FILENO) == -1)
+		return (perror("dup2"), (*env_list)->value = ft_strdup("1"), close(fd), -1);
 	close(fd);
-	dup2(saved_stdout, 0);
-	close(saved_stdout);
-	return ;
+	while (redir && redir->type == 3)
+		redir = redir->next;
+	if (!redir)
+		return (-1);
+	return 0;
 }
 
-void	in_heredoc_redirs(struct s_command *cmd, t_list_env **env_list,
-		char ***env, char ***env1, char *file)
+int ft_lstsize1(t_command *lst)
 {
-	int(fd), (saved_stdout);
-	saved_stdout = dup(0);
-	if (ft_strcmp(cmd->inoutfile->filename, "ctrlC") == 0)
-		return ;
-	if (cmd->inoutfile->type == 0)
+	int	i;
+
+	i = 0;
+	while (lst != NULL)
 	{
-		fd = open(cmd->inoutfile->filename, O_RDONLY);
-		if (fd == -1)
-			return ((*env_list)->value = ft_strdup("1"), perror(""));
-		dup2(fd, 0);
-		execute_cmd(cmd, env_list, env, env1);
-		close(fd);
-		dup2(saved_stdout, 0);
-		close(saved_stdout);
-		return ;
+		i++;
+		lst = lst->next;
 	}
-	else
-		heredoc_redirection(cmd, env_list, env, env1, file);
+	return (i);
 }
+
 
 void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 		char ***env, char ***env1)
 {
-	pid_t	pid;
-	int		status;
+	int		status, i;
+	pid_t *tab;
+	int		n_cmd = ft_lstsize1(cmd_list);
 	char	*file;
 
 	status = 0;
+	i = 0;
+	tab = ft_malloc(sizeof( pid_t) * n_cmd, 0);
 	file = cmd_list->heredoc;
 	int(pipe_fd[2]), (prev_fd);
 	prev_fd = -1;
 	if (!cmd_list->next)
 	{
-		if (is_redirection(cmd_list, env_list, env, env1, file) != 1)
+		if (before_redir(cmd_list, env_list, env, env1, file) != 1)
 			execute_cmd(cmd_list, env_list, env, env1);
+		// exit(0);
 		return ;
 	}
 	while (cmd_list)
 	{
+		file = cmd_list->heredoc;
 		if (cmd_list->next)
 		{
 			if (pipe(pipe_fd) == -1)
 				return ((*env_list)->value = ft_strdup("1"), perror("pipe"));
 		}
-		pid = fork();
-		if (pid == -1)
+		tab[i] = fork();
+		if (tab[i] == -1)
 			return ((*env_list)->value = ft_strdup("1"), perror("fork"));
-		if (pid == 0)
+		if (tab[i] == 0)
 		{
 			if (prev_fd != -1)
 			{
@@ -176,10 +222,9 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 				close(pipe_fd[0]);
 				close(pipe_fd[1]);
 			}
-			if (is_redirection(cmd_list, env_list, env, env1, file) == 1)
-				exit(1);
-			execute_cmd(cmd_list, env_list, env, env1);
-				exit(ft_atoi((*env_list)->value));
+			if (before_redir(cmd_list, env_list, env, env1, file) != 1)
+				execute_cmd(cmd_list, env_list, env, env1);
+			exit(ft_atoi((*env_list)->value));
 		}
 		else
 		{
@@ -192,10 +237,18 @@ void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list,
 			}
 			cmd_list = cmd_list->next;
 		}
+		i++;
 	}
-	while (waitpid(0, &status, 0) > 0)
+	i = 0;
+	while ( i < n_cmd)
 	{
-		if (WIFEXITED(status))
-			(*env_list)->value = ft_itoa(WEXITSTATUS(status));
+		waitpid(tab[i], &status, 0);
+		if (i ==  n_cmd - 1)
+		{
+			if (WIFEXITED(status))
+				(*env_list)->value = ft_itoa(WEXITSTATUS(status));
+		}
+		i++;
 	}
+
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/18 13:38:21 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 14:17:00 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void	help_main(char *line, t_list_env **invarmant)
 		t_command *hh = cmd_list;
 		while (hh)
 		{
-			printf("[%s]\n", cmd_list->heredoc);
+			printf("[%s]\n", hh->heredoc);
 			hh = hh->next;
 		}
 		exection(cmd_list, &env_list);
