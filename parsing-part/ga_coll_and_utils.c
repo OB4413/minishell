@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   garbage_collector.c                                :+:      :+:    :+:   */
+/*   ga_coll_and_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:24:57 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/08 15:32:23 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 17:00:52 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,18 @@ void	*ft_malloc(size_t size, int type)
 	else if (type == 1)
 		ft_lstclear(&head, free);
 	return (NULL);
+}
+
+int	help_split_to_tokens4(char *tokn, t_input **temp, char **temp2,
+		t_input **temp1)
+{
+	int	i;
+
+	i = 0;
+	*temp2 = (*temp)->value;
+	*temp1 = (*temp)->next;
+	(*temp)->next = NULL;
+	while (tokn && tokn[i])
+		i++;
+	return (i);
 }

@@ -6,58 +6,11 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:38:49 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/19 17:49:24 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 17:11:27 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
-
-void	help_count_word(char *line, int *k, int *i, char *d)
-{
-	(*i)++;
-	if (line[*i] && line[*i] == *d)
-	{
-		*d = '\0';
-		*k = 0;
-		(*i)++;
-	}
-}
-
-void	skip_wait_space(char *line, int *i)
-{
-	*i = 0;
-	while (line[*i] <= 32 && line[*i] != '\0')
-		(*i)++;
-}
-
-int	ft_count_word(char *line, int j, int k, char d)
-{
-	int	i;
-
-	skip_wait_space(line, &i);
-	while (line[i] != '\0')
-	{
-		if ((line[i] == '"' || line[i] == '\'') && k == 0)
-		{
-			if ((i == 0 || line[i - 1] <= 32 || line[i - 1] == '|'
-					|| ft_strrchr("><", line[i - 1])))
-				j++;
-			d = line[i];
-			k = 1;
-		}
-		if ((line[i] == '|' || ft_strchr("><", line[i])) && k == 0)
-		{
-			if (line[i] == line[i + 1])
-				i++;
-			j++;
-		}
-		else if (line[i] > 32 && k == 0 && (i == 0 || line[i - 1] <= 32
-				|| line[i - 1] == '|' || ft_strrchr("><", line[i - 1])))
-			j++;
-		help_count_word(line, &k, &i, &d);
-	}
-	return (j);
-}
 
 char	*help_alloc_and_cpy(char *s, int *i, int start)
 {
@@ -111,7 +64,7 @@ char	**split_line(char *line)
 
 	i = 0;
 	j = 0;
-	words = ft_count_word(line, 0, 0, '\0');
+	words = ft_count_word_min(line, 0, 0, '\0');
 	array = ft_malloc((words + 1) * sizeof(char *), 0);
 	if (array == NULL)
 		return (NULL);
