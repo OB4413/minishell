@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/21 15:00:59 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:35:23 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,81 +75,6 @@ int	ft_lstsize1(t_command *lst)
 	return (i);
 }
 
-// void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list)
-// {
-// 	pid_t	*tab;
-// 	int		n_cmd;
-// 	char	*file;
-
-// 	int status, i;
-// 	n_cmd = ft_lstsize1(cmd_list);
-// 	status = 0;
-// 	i = 0;
-// 	tab = ft_malloc(sizeof(pid_t) * n_cmd, 0);
-// 	file = cmd_list->heredoc;
-// 	int(pipe_fd[2]), (prev_fd);
-// 	prev_fd = -1;
-// 	if (!cmd_list->next)
-// 	{
-// 		if (before_redir(cmd_list, env_list, file) != 1)
-// 			execute_cmd(cmd_list, env_list);
-// 		// exit(0);
-// 		return ;
-// 	}
-// 	while (cmd_list)
-// 	{
-// 		file = cmd_list->heredoc;
-// 		if (cmd_list->next)
-// 		{
-// 			if (pipe(pipe_fd) == -1)
-// 				return ((*env_list)->value = ft_strdup("1"), perror("pipe"));
-// 		}
-// 		tab[i] = fork();
-// 		if (tab[i] == -1)
-// 			return ((*env_list)->value = ft_strdup("1"), perror("fork"));
-// 		if (tab[i] == 0)
-// 		{
-// 			if (prev_fd != -1)
-// 			{
-// 				dup2(prev_fd, 0);
-// 				close(prev_fd);
-// 			}
-// 			if (cmd_list->next)
-// 			{
-// 				dup2(pipe_fd[1], 1);
-// 				close(pipe_fd[0]);
-// 				close(pipe_fd[1]);
-// 			}
-// 			if (before_redir(cmd_list, env_list, file) != 1)
-// 				execute_cmd(cmd_list, env_list);
-// 			exit(ft_atoi((*env_list)->value));
-// 		}
-// 		else
-// 		{
-// 			if (prev_fd != -1)
-// 				close(prev_fd);
-// 			if (cmd_list->next)
-// 			{
-// 				close(pipe_fd[1]);
-// 				prev_fd = pipe_fd[0];
-// 			}
-// 			cmd_list = cmd_list->next;
-// 		}
-// 		i++;
-// 	}
-// 	i = 0;
-// 	while (i < n_cmd)
-// 	{
-// 		waitpid(tab[i], &status, 0);
-// 		if (i == n_cmd - 1)
-// 		{
-// 			if (WIFEXITED(status))
-// 				(*env_list)->value = ft_itoa(WEXITSTATUS(status));
-// 		}
-// 		i++;
-// 	}
-// }
-
 void	execute_single(t_command *cmd, t_list_env **env_list)
 {
 	char	*file;
@@ -166,81 +91,4 @@ void	setup_pipe(t_command *cmd, int pipe_fd[2])
 		perror("pipe");
 		ft_exit_status(1);
 	}
-}
-
-void	exec_child(t_command *cmd, t_list_env **env_list,
-					int prev_fd, int pipe_fd[2])
-{
-	char	*file;
-
-	file = cmd->heredoc;
-	if (prev_fd != -1)
-	{
-		dup2(prev_fd, 0);
-		close(prev_fd);
-	}
-	if (cmd->next)
-	{
-		dup2(pipe_fd[1], 1);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-	}
-	if (before_redir(cmd, env_list, file) != 1)
-		execute_cmd(cmd, env_list);
-	ft_exit_status(ft_atoi((*env_list)->value));
-}
-
-void	exec_parent(t_command *cmd, int *prev_fd, int pipe_fd[2])
-{
-	if (*prev_fd != -1)
-		close(*prev_fd);
-	if (cmd->next)
-	{
-		close(pipe_fd[1]);
-		*prev_fd = pipe_fd[0];
-	}
-}
-
-void	wait_all(pid_t *pids, int n_cmd, t_list_env **env_list)
-{
-	int	status;
-	int	i;
-
-	i = 0;
-	while (i < n_cmd)
-	{
-		waitpid(pids[i], &status, 0);
-		if (i == n_cmd - 1 && WIFEXITED(status))
-			(*env_list)->value = ft_itoa(WEXITSTATUS(status));
-		i++;
-	}
-}
-
-void	execute_piped_commands(t_command *cmd_list, t_list_env **env_list)
-{
-	pid_t	*pids;
-
-	int (n_cmd), (i), (pipe_fd[2]), (prev_fd);
-	i = 0;
-	prev_fd = -1;
-	n_cmd = ft_lstsize1(cmd_list);
-	pids = ft_malloc(sizeof(pid_t) * n_cmd, 0);
-	if (!cmd_list->next)
-		return (execute_single(cmd_list, env_list));
-	while (cmd_list)
-	{
-		setup_pipe(cmd_list, pipe_fd);
-		pids[i] = fork();
-		if (pids[i] == -1)
-		{
-			(*env_list)->value = ft_strdup("1");
-			return (perror("fork"));
-		}
-		if (pids[i] == 0)
-			exec_child(cmd_list, env_list, prev_fd, pipe_fd);
-		exec_parent(cmd_list, &prev_fd, pipe_fd);
-		cmd_list = cmd_list->next;
-		i++;
-	}
-	wait_all(pids, n_cmd, env_list);
 }

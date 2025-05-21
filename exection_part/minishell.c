@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/21 15:02:55 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:31:57 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,114 +16,6 @@ void	getworkingdir(t_list_env **list)
 {
 	printf("%s\n", ft_getenv(list, "PWD")->value);
 	(*list)->value = ft_strdup("0");
-}
-
-void	getenvfunc(char **env, t_list_env **env_list, char **args)
-{
-	int	i;
-
-	i = 0;
-	if (args[1])
-	{
-		write(2, "No such file or directory\n", 27);
-		(*env_list)->value = "1";
-		return ;
-	}
-	while (env[i] != NULL)
-	{
-		if (ft_strchr(env[i], '=') && ((ft_strchr(env[i], '=')[1]) != '\0'))
-			printf("%s\n", env[i]);
-		i++;
-	}
-	(*env_list)->value = "0";
-}
-
-// void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)
-// {
-// 	pid_t	pid;
-
-// 	int (status), (exit_code), (sig);
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		signal(SIGQUIT, SIG_DFL);
-// 		if (execve_like_execvp(cmdList->args[0], cmdList->args, env,
-// 				env_list) == -1)
-// 			write(2, "command not found\n", 19);
-// 		(*env_list)->value = ft_strdup("127");
-// 		ft_exit_status(127);
-// 	}
-// 	else if (pid < 0)
-// 	{
-// 		perror("Error");
-// 		(*env_list)->value = ft_strdup("1");
-// 	}
-// 	else
-// 	{
-// 		signal(SIGINT, SIG_IGN);
-// 		waitpid(pid, &status, 0);
-// 		if (WIFEXITED(status))
-// 		{
-// 			exit_code = WEXITSTATUS(status);
-// 			(*env_list)->value = ft_itoa(exit_code);
-// 		}
-// 		if (WIFSIGNALED(status))
-// 		{
-// 			sig = WTERMSIG(status);
-// 			if (sig == SIGINT)
-// 			{
-// 				(*env_list)->value = ft_itoa(130);
-// 				write(1, "\n", 1);
-// 			}
-// 			else if (sig == SIGQUIT)
-// 			{
-// 				write(2, "Quit (core dumped)\n", 20);
-// 				(*env_list)->value = ft_itoa(131);
-// 			}
-// 		}
-// 		signal(SIGINT, sigint_handler);
-// 	}
-// }
-
-void	exec_child1(t_command *cmdList, char **env, t_list_env **env_list)
-{
-	signal(SIGQUIT, SIG_DFL);
-	if (execve_like_execvp(cmdList->args[0],
-			cmdList->args, env, env_list) == -1)
-		write(2, "command not found\n", 19);
-	(*env_list)->value = ft_strdup("127");
-	ft_malloc(0, 1);
-	ft_exit_status(127);
-}
-
-void	exec_fork_error(t_list_env **env_list)
-{
-	perror("Error");
-	(*env_list)->value = ft_strdup("1");
-}
-
-void	exec_parent1(pid_t pid, t_list_env **env_list)
-{
-	int (status), (sig);
-	signal(SIGINT, SIG_IGN);
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		(*env_list)->value = ft_itoa(WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
-	{
-		sig = WTERMSIG(status);
-		if (sig == SIGINT)
-		{
-			(*env_list)->value = ft_itoa(130);
-			write(1, "\n", 1);
-		}
-		else if (sig == SIGQUIT)
-		{
-			write(2, "Quit (core dumped)\n", 20);
-			(*env_list)->value = ft_itoa(131);
-		}
-	}
-	signal(SIGINT, sigint_handler);
 }
 
 void	shell_luncher(t_command *cmdList, char **env, t_list_env **env_list)

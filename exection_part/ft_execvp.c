@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/20 22:13:47 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:29:57 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,15 @@ int	execve_like_execvp(const char *file, char **argv, char **env,
 	}
 	result = execve(full_path, argv, env);
 	return (result);
+}
+
+void	exec_child1(t_command *cmdList, char **env, t_list_env **env_list)
+{
+	signal(SIGQUIT, SIG_DFL);
+	if (execve_like_execvp(cmdList->args[0],
+			cmdList->args, env, env_list) == -1)
+		write(2, "command not found\n", 19);
+	(*env_list)->value = ft_strdup("127");
+	ft_malloc(0, 1);
+	ft_exit_status(127);
 }

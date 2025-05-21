@@ -3,38 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtings.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 22:45:17 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/21 15:05:45 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:32:32 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_exec.h"
-
-void	ft_echo(char **cmdlist, t_list_env **env_list)
-{
-	bool	flag;
-	int		i;
-
-	flag = true;
-	i = 1;
-	if (cmdlist[1] && ft_strcmp(cmdlist[1], "-n") == 0)
-	{
-		flag = false;
-		i++;
-	}
-	while (cmdlist[i])
-	{
-		printf("%s", cmdlist[i]);
-		if (cmdlist[i + 1])
-			printf(" ");
-		i++;
-	}
-	if (flag)
-		printf("\n");
-	(*env_list)->value = "0";
-}
 
 t_list_env	*ft_getenv(t_list_env **env_list, char *str)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/21 15:01:38 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:38:15 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,16 @@ char		*change_dir(t_list_env **env_list);
 void		ft_cd(char **cmdlist, t_list_env **env_list);
 void		ft_exit(char **args, t_list_env **list);
 int			is_number(char *str);
+void		exec_fork_error(t_list_env **env_list);
+void		exec_parent1(pid_t pid, t_list_env **env_list);
+void		exec_child1(t_command *cmdList, char **env, t_list_env **env_list);
+void		getenvfunc(char **env, t_list_env **env_list, char **args);
+void		wait_all(pid_t *pids, int n_cmd, t_list_env **env_list);
+void		exec_parent(t_command *cmd, int *prev_fd, int pipe_fd[2]);
+void		exec_child(t_command *cmd, t_list_env **env_list,
+				int prev_fd, int pipe_fd[2]);
+int			ft_lstsize1(t_command *lst);
+void		execute_single(t_command *cmd, t_list_env **env_list);
+void		setup_pipe(t_command *cmd, int pipe_fd[2]);
 
 #endif
