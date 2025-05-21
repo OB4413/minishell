@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/20 19:03:05 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 13:35:03 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	**help_put_the_args(char **args, t_input **tmp, int *i, int *j)
 char	**put_the_args(t_input *tok, char *cmd, char **args, t_input *tmp)
 {
 	int (i), (j);
-	t_input (*tmp2);
+	t_input(*tmp2);
 	i = 0;
 	j = 0;
 	tmp = tok;
@@ -240,7 +240,7 @@ void	help_main(char *line, t_list_env **invarmant)
 	{
 		add_history(line);
 		tokenization(line, &tok);
-		expand_variables(&tok, env_list, 0, 0);
+		expand_variables(&tok, env_list, 0);
 		list_commands(tok, &cmd_list);
 		if (parsing_tokns(tok, &cmd_list, env_list) == 1)
 		{

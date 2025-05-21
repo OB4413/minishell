@@ -8,7 +8,7 @@ FILES = exection_part/minishell.c exection_part/ft_split.c exection_part/additio
 OBJECT = $(FILES:.c=.o)
 libft = parsing-part/libft/libft.a
 
-all : $(NAME) clean
+all : $(NAME)
 
 $(NAME): $(libft) $(OBJECT)
 	$(CC) $(CFLAGS) $(OBJECT) $(libft) -o $(NAME) -lreadline

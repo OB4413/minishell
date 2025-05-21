@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/19 19:19:30 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 17:11:02 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,6 +344,11 @@ int	help_chek_ambiguous_redirectin(t_list_env *env, t_redir **redir, int *i)
 			}
 			(*i)++;
 		}
+	}
+	if (!(*redir)->filename)
+	{
+		write(2, "minishell: ambiguous redirect\n", 31);
+		return (1);
 	}
 	remove_quote(&(*redir)->filename, 0);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 08:06:45 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/19 21:53:13 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/20 19:51:52 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ char	*ft_strjoin_c(char *s1, char c)
 	return (str);
 }
 
-char	*help_split_to_tokens(char h, t_input **temp, t_input **temp1, char **temp2)
+char	*help_split_to_tokens(char h, t_input **temp, t_input **temp1,
+		char **temp2)
 {
 	t_input	*new;
 	char	*k;
@@ -72,9 +73,10 @@ char	*help_split_to_tokens(char h, t_input **temp, t_input **temp1, char **temp2
 	(*temp)->next = *temp1;
 	return (k);
 }
+
 int	help_split_to_tokens1(char *str, t_input **temp, int *i, char *tokn)
 {
-	int start;
+	int	start;
 
 	start = *i;
 	while (str[*i] && str[*i] > 32)
@@ -92,7 +94,8 @@ int	help_split_to_tokens1(char *str, t_input **temp, int *i, char *tokn)
 	return (0);
 }
 
-char	*help_split_to_tokens2(char *k, t_input **temp, t_input **temp1, char **temp2)
+char	*help_split_to_tokens2(char *k, t_input **temp, t_input **temp1,
+		char **temp2)
 {
 	k = (*temp)->value;
 	(*temp)->value = *temp2;
@@ -112,9 +115,10 @@ void	help_split_to_tokens3(char *str, t_input **temp, int *i, int *start)
 	(*temp) = (*temp)->next;
 }
 
-int	help_split_to_tokens4(char *tokn, t_input **temp, char **temp2, t_input **temp1)
+int	help_split_to_tokens4(char *tokn, t_input **temp, char **temp2,
+		t_input **temp1)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	*temp2 = (*temp)->value;
@@ -153,72 +157,79 @@ char	*split_to_tokens(char *tokn, t_input **temp, char *str, char h)
 	return (help_split_to_tokens2(NULL, temp, &temp1, &temp2));
 }
 
-char	*ft_check_quote(char *str, t_list_env *env, char q)
+int	help_chek_quote1(char *str, char **tokn, t_list_env *env, int *i)
 {
-	int		i;
-	int		start;
+	int	start;
+
+	if (str[*i] == '$' && (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'
+			|| str[*i + 1] == '?'))
+	{
+		(*i)++;
+		if (str[*i] >= 48 && str[*i] <= 57 && (*i)++)
+			return (1);
+		start = *i;
+		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'
+				|| str[*i] == '?'))
+		{
+			(*i)++;
+			if (str[*i - 1] == '?' && start--)
+				break ;
+		}
+		*tokn = ft_strjoin(*tokn, get_value(ft_substr(str, start, *i - start),
+					env));
+		if (str[*i] && str[*i] == '"')
+			(*i)++;
+	}
+	if (str[*i])
+		*tokn = ft_strjoin_c(*tokn, str[*i]);
+	(*i)++;
+	return (0);
+}
+
+int	help_chek_quote(char *str, char **tokn, t_list_env *env, int *i)
+{
+	if (str[*i] == '"')
+	{
+		(*i)++;
+		while (str[*i] && str[*i] != '"')
+		{
+			if (help_chek_quote1(str, tokn, env, i) == 1)
+				return (0);
+		}
+	}
+	else if (str[*i] && str[*i] == '\'')
+	{
+		(*i)++;
+		while (str[*i] && str[*i] != '\'')
+		{
+			*tokn = ft_strjoin_c(*tokn, str[*i]);
+			(*i)++;
+		}
+		(*i)++;
+	}
+	else
+	{
+		*tokn = ft_strjoin_c(*tokn, str[*i]);
+		(*i)++;
+	}
+	return (0);
+}
+
+char	*ft_check_quote(char *str, t_list_env *env, char q, int i)
+{
 	char	*tokn;
 
-	i = 0;
 	tokn = NULL;
 	while (str[i] && str[ft_strlen(str) - 1] == q && str[1] != '\0')
-	{
-		if (str[i] == '"')
-		{
-			i++;
-			while (str[i] && str[i] != '"')
-			{
-				if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i
-						+ 1] == '_' || str[i + 1] == '?'))
-				{
-					i++;
-					if (str[i] >= 48 && str[i] <= 57 && i++)
-						continue ;
-					start = i;
-					while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'
-							|| str[i] == '?'))
-					{
-						i++;
-						if (str[i - 1] == '?' && start--)
-							break ;
-					}
-					tokn = ft_strjoin(tokn, get_value(ft_substr(str, start, i
-									- start), env));
-					if (str[i] && str[i] == '"')
-						i++;
-				}
-				if (str[i])
-					tokn = ft_strjoin_c(tokn, str[i]);
-				i++;
-			}
-		}
-		else if (str[i] && str[i] == '\'')
-		{
-			i++;
-			while (str[i] && str[i] != '\'')
-			{
-				tokn = ft_strjoin_c(tokn, str[i]);
-				i++;
-			}
-			i++;
-		}
-		else
-		{
-			tokn = ft_strjoin_c(tokn, str[i]);
-			i++;
-		}
-	}
+		help_chek_quote(str, &tokn, env, &i);
 	if (str[ft_strlen(str) - 1] != q || str[1] == '\0')
-	{
-		printf("Error: Unmatched quotes\n");
-		exit(1);
-	}
+		write(2, "Error: Unmatched quotes\n", 25);
 	return (tokn);
 }
 
 int	help_expand_variables1(int *i, char *str, t_list_env *env, char **tokn)
 {
-	int start;
+	int	start;
 
 	(*i)++;
 	if (str[*i] >= 48 && str[*i] <= 57)
@@ -236,8 +247,8 @@ int	help_expand_variables1(int *i, char *str, t_list_env *env, char **tokn)
 
 void	help_expand_variables2(int *i, char *str, char **tokn, t_list_env *env)
 {
-	char q;
-	int start;
+	char	q;
+	int		start;
 
 	q = str[*i];
 	*tokn = ft_strjoin_c(*tokn, '\'');
@@ -247,7 +258,8 @@ void	help_expand_variables2(int *i, char *str, char **tokn, t_list_env *env)
 		(*i)++;
 	if (str[*i])
 		(*i)++;
-	*tokn = ft_strjoin(*tokn, ft_check_quote(ft_substr(str, start, *i - start), env, q));
+	*tokn = ft_strjoin(*tokn, ft_check_quote(ft_substr(str, start, *i - start),
+				env, q, 0));
 	*tokn = ft_strjoin_c(*tokn, '\'');
 }
 
@@ -259,10 +271,10 @@ char	*help_expand_variables(char *str, t_list_env *env, int i)
 	while (str && str[i])
 	{
 		if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i
-				+ 1] == '_'))
+					+ 1] == '_'))
 		{
 			if (help_expand_variables1(&i, str, env, &tokn) == 1)
-				continue;
+				continue ;
 		}
 		else if (str[i] == '"' || str[i] == '\'')
 			help_expand_variables2(&i, str, &tokn, env);
@@ -275,10 +287,64 @@ char	*help_expand_variables(char *str, t_list_env *env, int i)
 	return (tokn);
 }
 
-void	expand_variables(t_input **tok, t_list_env *env, int i, int start)
+void	heelp_expand_variables1(t_input **temp, int *i, char **tokn,
+		t_list_env *env)
+{
+	int		start;
+	char	q;
+
+	if ((*temp)->value[*i] == '"' || (*temp)->value[*i] == '\'')
+	{
+		q = (*temp)->value[*i];
+		start = *i;
+		(*i)++;
+		while ((*temp)->value[*i] && (*temp)->value[*i] != q)
+			(*i)++;
+		if ((*temp)->value[*i])
+			(*i)++;
+		*tokn = ft_strjoin(*tokn, ft_check_quote(ft_substr((*temp)->value,
+						start, *i - start), env, q, 0));
+	}
+	else
+	{
+		*tokn = ft_strjoin_c(*tokn, (*temp)->value[*i]);
+		(*i)++;
+	}
+}
+
+void	heelp_expand_variables(t_input **temp, int *i, char **tokn,
+		t_list_env *env)
+{
+	int (start);
+	if ((*temp)->value[*i] == '$' && (*temp)->value[*i + 1]
+		&& (ft_isalnum((*temp)->value[*i + 1]) || (*temp)->value[*i + 1] == '_'
+			|| (*temp)->value[*i + 1] == '?'))
+	{
+		if ((*i)++ && (*temp)->value[*i] >= 48 && (*temp)->value[*i] <= 57
+			&& (*i)++)
+			return ;
+		start = *i;
+		while ((*temp)->value[*i] && (ft_isalnum((*temp)->value[*i])
+				|| (*temp)->value[*i] == '_' || (*temp)->value[*i] == '?'))
+		{
+			if ((*temp)->value[++(*i) - 1] == '?' && start--)
+				break ;
+		}
+		if ((*temp)->value[*i - 1] == '?')
+			*tokn = ft_strjoin(*tokn, get_value(ft_substr((*temp)->value, start,
+							*i - start), env));
+		else
+			*tokn = split_to_tokens(*tokn, temp,
+					get_value(ft_substr((*temp)->value, start, *i - start),
+						env), (*temp)->value[*i]);
+	}
+	else
+		heelp_expand_variables1(temp, i, tokn, env);
+}
+
+void	expand_variables(t_input **tok, t_list_env *env, int i)
 {
 	char	*tokn;
-	char	q;
 	t_input	*temp;
 
 	temp = *tok;
@@ -289,49 +355,9 @@ void	expand_variables(t_input **tok, t_list_env *env, int i, int start)
 		if (temp->value && temp->type == WORD)
 		{
 			while (temp->value[i])
-			{
-				if (temp->value[i] == '$' && temp->value[i + 1]
-					&& (ft_isalnum(temp->value[i + 1]) || temp->value[i
-						+ 1] == '_' || temp->value[i + 1] == '?'))
-				{
-					i++;
-					if (temp->value[i] >= 48 && temp->value[i] <= 57 && i++)
-						continue ;
-					start = i;
-					while (temp->value[i] && (ft_isalnum(temp->value[i])
-							|| temp->value[i] == '_' || temp->value[i] == '?'))
-					{
-						i++;
-						if (temp->value[i - 1] == '?' && start--)
-							break ;
-					}
-					if (temp->value[i - 1] == '?')
-						tokn = ft_strjoin(tokn, get_value(ft_substr(temp->value,
-										start, i - start), env));
-					else
-						tokn = split_to_tokens(tokn, &temp,
-								get_value(ft_substr(temp->value, start, i
-										- start), env), temp->value[i]);
-				}
-				else if (temp->value[i] == '"' || temp->value[i] == '\'')
-				{
-					q = temp->value[i];
-					start = i;
-					i++;
-					while (temp->value[i] && temp->value[i] != q)
-						i++;
-					if (temp->value[i])
-						i++;
-					tokn = ft_strjoin(tokn,
-							ft_check_quote(ft_substr(temp->value, start, i
-									- start), env, q));
-				}
-				else
-				{
-					tokn = ft_strjoin_c(tokn, temp->value[i]);
-					i++;
-				}
-			}
+				heelp_expand_variables(&temp, &i, &tokn, env);
+			if (tokn == NULL && ft_strchr(temp->value, '$') == NULL)
+				tokn = ft_strdup("\0");
 			temp->value = tokn;
 			tokn = NULL;
 		}
