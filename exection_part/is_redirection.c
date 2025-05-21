@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_redirection.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/21 13:39:17 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:00:59 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void	setup_pipe(t_command *cmd, int pipe_fd[2])
 	if (cmd->next && pipe(pipe_fd) == -1)
 	{
 		perror("pipe");
-		exit(1);
+		ft_exit_status(1);
 	}
 }
 
@@ -187,7 +187,7 @@ void	exec_child(t_command *cmd, t_list_env **env_list,
 	}
 	if (before_redir(cmd, env_list, file) != 1)
 		execute_cmd(cmd, env_list);
-	exit(ft_atoi((*env_list)->value));
+	ft_exit_status(ft_atoi((*env_list)->value));
 }
 
 void	exec_parent(t_command *cmd, int *prev_fd, int pipe_fd[2])

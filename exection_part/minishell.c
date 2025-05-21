@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/21 12:22:25 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:02:55 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	getenvfunc(char **env, t_list_env **env_list, char **args)
 // 				env_list) == -1)
 // 			write(2, "command not found\n", 19);
 // 		(*env_list)->value = ft_strdup("127");
-// 		exit(127);
+// 		ft_exit_status(127);
 // 	}
 // 	else if (pid < 0)
 // 	{
@@ -92,7 +92,8 @@ void	exec_child1(t_command *cmdList, char **env, t_list_env **env_list)
 			cmdList->args, env, env_list) == -1)
 		write(2, "command not found\n", 19);
 	(*env_list)->value = ft_strdup("127");
-	exit(127);
+	ft_malloc(0, 1);
+	ft_exit_status(127);
 }
 
 void	exec_fork_error(t_list_env **env_list)

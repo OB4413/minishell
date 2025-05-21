@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtings.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 22:45:17 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/20 22:48:43 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:05:45 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*change_dir(t_list_env **env_list)
 {
 	char	*cwd;
 
-	cwd = malloc(1024);
+	cwd = ft_malloc(1024, 0);
 	if (!cwd)
 		return (NULL);
 	if (getcwd(cwd, 1024) == NULL)
@@ -94,6 +94,12 @@ void	ft_cd(char **cmdlist, t_list_env **env_list)
 	(*env_list)->value = "0";
 }
 
+void	ft_exit_status(int n)
+{
+	ft_malloc(0, 1);
+	exit(n);
+}
+
 void	ft_exit(char **args, t_list_env **list)
 {
 	int	i;
@@ -101,7 +107,7 @@ void	ft_exit(char **args, t_list_env **list)
 	if (!args[1])
 	{
 		write(2, "exit\n", 5);
-		exit(ft_atoi((*list)->value));
+		ft_exit_status(ft_atoi((*list)->value));
 	}
 	if (args[1] && args[2])
 	{
@@ -113,12 +119,12 @@ void	ft_exit(char **args, t_list_env **list)
 	{
 		i = ft_atoi(args[1]) % 256;
 		write(1, "exit\n", 5);
-		exit(i);
+		ft_exit_status(i);
 	}
 	else
 	{
 		write(2, "exit\n", 5);
-		return (write(2, "numeric argument required\n", 26), exit(2));
+		return (write(2, "numeric argument required\n", 26), ft_exit_status(2));
 	}
 	(*list)->value = ft_strdup("2");
 }

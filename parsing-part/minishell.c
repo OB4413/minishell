@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/21 13:39:46 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 14:54:03 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int g_exit_sgnal;
+int	g_exit_sgnal;
 
 void	help_list_env1(t_list_env **new_env, int *c, t_list_env **env_list)
 {

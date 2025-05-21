@@ -6,7 +6,7 @@
 /*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:34:00 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/20 17:11:02 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/21 14:54:49 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,9 +198,9 @@ int	help_handel_heredoc1(pid_t pid, int status, t_list_env *env, t_command **hh)
 	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, sigint_handler);
-	if (WIFSIGNALED(status))
+	if (WIFEXITED(status))
 	{
-		if (WTERMSIG(status) == SIGINT)
+		if (WEXITSTATUS(status) == 130)
 		{
 			(*hh)->heredoc = ft_strdup("ctrlC");
 			env->value = ft_strdup("130");
@@ -227,7 +227,8 @@ int	help_handel_heredoc2(t_input *tok, t_command **hh, t_list_env *env, int fd)
 	}
 	if (tok->type == PIPE)
 		*hh = (*hh)->next;
-	close(fd);
+	if (fd > 0)
+		close(fd);
 	return (0);
 }
 
@@ -276,7 +277,6 @@ void	run_children(char **tmp, t_list_env *env, t_input *tok, int fd)
 	int			b;
 	char		*str;
 
-	b = 0;
 	j++;
 	b = help_run_children(tmp, env, &str, tok);
 	while (str && ft_strcmp(str, (*tmp)) != 0)
@@ -296,7 +296,15 @@ void	run_children(char **tmp, t_list_env *env, t_input *tok, int fd)
 		printf("minishell: warning: here-document at line ");
 		printf("%d delimited by end-of-file (wanted `%s')\n", j, *tmp);
 	}
+	ft_malloc(0, 1);
 	exit(0);
+}
+
+void	handler_sig_heredoc(int sig)
+{
+	(void)sig;
+	ft_malloc(0, 1);
+	exit(130);
 }
 
 void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env,
@@ -317,7 +325,7 @@ void	handler_heredoc(t_input *tok, t_command **cmd_list, t_list_env *env,
 			pid = fork();
 			if (pid == 0)
 			{
-				signal(SIGINT, SIG_DFL);
+				signal(SIGINT, handler_sig_heredoc);
 				run_children(&tmp, env, tok, fd);
 			}
 			if (help_handel_heredoc1(pid, 0, env, &hh) == 1)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:23:34 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/21 12:23:15 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:01:38 by obarais          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_env_data
 struct	s_command;
 struct	s_list_env;
 struct	s_redir;
+void		ft_exit_status(int n);
 int			ft_strcmp(const char *s1, const char *s2);
 char		**ft_split1(char const *s, char c);
 char		*ft_strdup(const char *s1);
