@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 08:43:07 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/20 15:44:44 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/20 22:13:47 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	is_executable(const char *path)
 {
-	struct stat	st;
-
-	return (stat(path, &st) == 0 && (st.st_mode & S_IXUSR));
+	if (access(path, F_OK | X_OK) == 0)
+		return (1);
+	return (0);
 }
 
 char	*search_path(const char *file)
@@ -42,9 +42,7 @@ char	*search_path(const char *file)
 		full_path = ft_strjoin(dir[i], "/");
 		full_path = ft_strjoin(full_path, file);
 		if (is_executable(full_path))
-		{
 			return (full_path);
-		}
 		i++;
 	}
 	return (NULL);
@@ -54,7 +52,7 @@ void	change_table(char *new_str, char ***tab)
 {
 	char	**tab2;
 
-	int(i), (j);
+	int (i), (j);
 	i = 0;
 	j = -1;
 	while ((*tab)[i])
@@ -69,12 +67,13 @@ void	change_table(char *new_str, char ***tab)
 	*tab = tab2;
 }
 
-int	execve_like_execvp(const char *file, char **argv, char **env, t_list_env **env_list)
+int	execve_like_execvp(const char *file, char **argv, char **env,
+		t_list_env **env_list)
 {
-	char	*full_path;
-	char	*path;
-	int		result;
-	t_list_env *env1;
+	char		*full_path;
+	char		*path;
+	int			result;
+	t_list_env	*env1;
 
 	env1 = ft_getenv(env_list, "PATH");
 	if (env1 == NULL)

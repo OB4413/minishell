@@ -2,7 +2,8 @@ NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-FILES = exection_part/minishell.c exection_part/ft_split.c exection_part/additional.c exection_part/additional1.c exection_part/export_and_unset.c exection_part/ft_execvp.c exection_part/ft_strjoin.c exection_part/is_redirection.c \
+FILES = exection_part/minishell.c exection_part/ft_split.c exection_part/additional.c exection_part/additional1.c exection_part/export_and_unset.c exection_part/ft_execvp.c \
+		exection_part/ft_strjoin.c exection_part/is_redirection.c exection_part/additional2.c exection_part/builtings.c \
 		parsing-part/minishell.c parsing-part/Tokenization.c parsing-part/Variable_Expansion.c parsing-part/parsing_tokns.c parsing-part/garbage_collector.c
 OBJECT = $(FILES:.c=.o)
 libft = parsing-part/libft/libft.a

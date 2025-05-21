@@ -6,11 +6,13 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 11:56:34 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/20 18:48:29 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:03:05 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
+
+int g_exit_sgnal;
 
 void	help_list_env1(t_list_env **new_env, int *c, t_list_env **env_list)
 {
@@ -217,6 +219,7 @@ void	list_commands(t_input *tok, t_command **cmd_list)
 void	sigint_handler(int signal)
 {
 	(void)signal;
+	g_exit_sgnal = 130;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -232,6 +235,7 @@ void	help_main(char *line, t_list_env **invarmant)
 	tok = NULL;
 	cmd_list = NULL;
 	env_list = *invarmant;
+	g_exit_sgnal = 0;
 	if (strlen(line) > 0)
 	{
 		add_history(line);
@@ -265,6 +269,8 @@ int	main(int ac, char **av, char **env)
 		signal(SIGINT, sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 		line = readline("minishell$ ");
+		if (g_exit_sgnal == 130)
+			env_list->value = ft_strdup("130");
 		if (!line)
 		{
 			printf("exit\n");
