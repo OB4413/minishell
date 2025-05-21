@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/03 10:40:59 by ael-jama          #+#    #+#             */
-/*   Updated: 2025/05/21 12:13:54 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/21 13:39:17 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	heredoc_redirection(t_redir *redir, char *file, t_list_env **env_list)
 	int	fd;
 
 	if (!file || ft_strcmp(file, "ctrlC") == 0)
-		return (0);
+		return (-1);
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 		return (perror("heredoc open"), (*env_list)->value = ft_strdup("1"),
