@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils7.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obarais <obarais@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:01:28 by obarais           #+#    #+#             */
-/*   Updated: 2025/05/21 17:02:20 by obarais          ###   ########.fr       */
+/*   Updated: 2025/05/22 16:08:53 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,11 @@ int	help_chek_quote1(char *str, char **tokn, t_list_env *env, int *i)
 		if (str[*i] && str[*i] == '"')
 			(*i)++;
 	}
-	if (str[*i])
+	else if (str[*i])
+	{
 		*tokn = ft_strjoin_c(*tokn, str[*i]);
-	(*i)++;
+		(*i)++;
+	}
 	return (0);
 }
 

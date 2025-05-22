@@ -6,7 +6,7 @@
 /*   By: ael-jama <ael-jama@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 00:24:19 by eljamaaouya       #+#    #+#             */
-/*   Updated: 2025/05/21 15:31:57 by ael-jama         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:25:40 by ael-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void	getworkingdir(t_list_env **list)
 {
+	if(!ft_getenv(list, "PWD"))
+	{
+		printf("%s\n", getcwd(NULL, 0));
+		return ;		
+	}
 	printf("%s\n", ft_getenv(list, "PWD")->value);
 	(*list)->value = ft_strdup("0");
 }
